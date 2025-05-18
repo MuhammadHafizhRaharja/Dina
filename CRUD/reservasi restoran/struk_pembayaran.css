@@ -1,0 +1,92 @@
+body {
+    font-family: sans-serif;
+    background: #000;
+    display: flex;
+    justify-content: center;
+    padding: 40px;
+  }
+
+  .receipt {
+    background: #f7f7f7;
+    padding: 24px 32px;
+    border-radius: 12px;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .receipt h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    border-bottom: 1px dashed #ccc;
+    padding-bottom: 10px;
+  }
+
+  .receipt .info {
+    margin-bottom: 12px;
+  }
+
+  .info-label {
+    font-size: 14px;
+    color: #666;
+  }
+
+  .info-value {
+    font-weight: bold;
+    font-size: 15px;
+    margin-bottom: 8px;
+  }
+
+  .total {
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: right;
+    color: #000;
+  }
+
+  .thankyou {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 14px;
+    color: #555;
+  }
+
+
+  .button-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+  }
+  
+  .btn-print,
+  .btn-back {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn-print {
+    background-color: grey;
+    color: white;
+  }
+  
+  .btn-print:hover {
+    background-color: rgb(89, 86, 86);
+  }
+  
+  .btn-back {
+    background-color: #a21e0f;
+    color: white;
+    text-align: center;
+  }
+  
+  .btn-back:hover {
+    background-color: maroon;
+  }
+  

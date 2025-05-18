@@ -1,0 +1,96 @@
+body {
+  font-family: sans-serif;
+  background: black;
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
+.container {
+  background: #f7f7f7;
+  padding: 24px 32px;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  margin-top: 100px;
+}
+
+h1, h3 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+p {
+  font-size: 14px;
+  margin: 6px 0;
+}
+
+.payment-card {
+  display: flex;
+  align-items: flex-start;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 16px;
+  margin: 20px 0;
+  position: relative;
+}
+
+.payment-content {
+  flex-grow: 1;
+}
+
+.payment-icon {
+  width: 50px;
+  height: 50px;
+  background-color: #eee;
+  border-radius: 8px;
+  margin-right: 16px;
+}
+
+.radio-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  transform: scale(1.3);
+}
+
+.terms-checkbox {
+  font-size: 12px;
+  margin-top: 10px;
+}
+
+.terms-checkbox input {
+  margin-right: 6px;
+}
+
+.payment-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30px;
+}
+
+.total-label {
+  font-size: 14px;
+  color: #444;
+}
+
+.total-amount {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.btn-pay {
+  padding: 10px 20px;
+  background-color: #2e2e2e;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn-pay:hover {
+  background-color: #1a1a1a;
+}
