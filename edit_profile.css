@@ -1,0 +1,86 @@
+body {
+    background-color: #000000;
+}
+/* General Container for Centering the Form */
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Card Style for the Profile Edit Form */
+.card {
+    background-color: #fff;
+    padding: 2rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+.card .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.card label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.card input[type="text"],
+.card input[type="email"],
+.card select,
+.card input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+}
+
+.card button {
+    background-color: #4CAF50;
+    color: rgb(255, 255, 255);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.card button:hover {
+    background-color: #45a049;
+}
+
+.card .btn-secondary {
+    background-color: #f1f1f1;
+    color: #333;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.card .btn-secondary:hover {
+    background-color: #ddd;
+}
+
+.card img {
+    border-radius: 50%;
+}
+
+/* Alerts */
+.alert-success {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.tekspropil {
+    font-size: 1.2rem;
+    margin:0;
+    align-items: center;
+}
