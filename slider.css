@@ -109,7 +109,12 @@ body {
    box-shadow: 0 2px 4px #fff;
    background-color: #f9f9f9;
    margin-top: -15px;
+
+   /* --- tambahkan ini --- */
+   position: relative;   /* pastikan elemen “positioned” */
+   z-index: 1000;        /* lebih tinggi dari banner/video/nav */
 }
+
 .search-bar input {
    border: none;
    outline: none;

@@ -1,3 +1,33 @@
+<?php
+include 'CRUD/reservasi restoran/db.php';
+
+$search  = strtolower(trim($_GET['search'] ?? ''));
+$hotels  = [];                     // <-- inisialisasi di sini
+
+if ($search === '') {
+    $sql  = "SELECT reservasi,name,image,description,stars
+             FROM hotels WHERE city='Bali'
+             ORDER BY stars DESC, name";
+    $stmt = $conn->prepare($sql);
+} else {
+    $sql  = "SELECT reservasi,name,image,description,stars
+             FROM hotels
+             WHERE city='Bali'
+               AND (LOWER(name) LIKE ? OR LOWER(description) LIKE ?)
+             ORDER BY stars DESC";
+    $like = "%$search%";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('ss', $like, $like);
+}
+
+$stmt->execute();
+$res = $stmt->get_result();
+$hotels = $res->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,11 +64,13 @@ include 'views/header2.php';
             <div class="nav-item"><a href="restaurant.php" class="material-symbols-outlined">restaurant <p>Restaurant</p></a></div>
             <div class="nav-item"><a href="tourism.php" class="material-symbols-outlined">explore <p>Tourism</p></a></div>
         </div>
-        <div class="search-bar">
+        <form class="search-bar" method="get" action="slider.php">
             <i class="fas fa-search"></i>
-            <input type="text" placeholder="Places to visit, things to do, hotels...">
-            <button>Find</button>
-        </div>
+            <input type="text" name="search"
+                value="<?= htmlspecialchars($search) ?>" placeholder="Search hotels in Bali...">
+            <button type="submit">Find</button>
+        </form>
+
     </div>
 
     <div class="banner">
@@ -58,87 +90,36 @@ include 'views/header2.php';
 <div class="container swiper" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="300">
     <div class="card-wrapper">
         <ul class="card-list swiper-wrapper">
-            <li class="card-item swiper-slide">
-                <a href="reservation1.php" class="card-link">
-                    <img src="media/grand.webp" alt="Card Image" class="card-image">
-                    <p class="badge designer">
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star"></span>
-                    </p>
-                    <h2 class="card-title">Grand Mega Resort & Spa Bali</h2><br>
-                    <p class="card-paragraph">The resort offers comprehensive facilities such as a spa, outdoor swimming pool, restaurant.</p><br>
-                    <button class="card-button
-                    material-symbols-rounded" type="button" onclick="location.href='https://maps.app.goo.gl/7vszya5GZdRFgg4q9?g_st=com.google.maps.preview.copy'">arrow_forward</button>
-                </a>
-            </li>
-            <li class="card-item swiper-slide">
-                <a href="reservation2.php" class="card-link">
-                    <img src="media/raflessbali.jpg" alt="Card Image" class="card-image">
-                    <p class="badge developer">
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star"></span>
-                    </p>
-                    <h2 class="card-title">Raffles Bali</h2><br>
-                    <p class="card-paragraph">Exclusive luxury resort located in Jimbaran, Bali, offering stunning views of the Indian Ocean.</p><br>
-                    <button class="card-button
-                    material-symbols-rounded" type="button" onclick="location.href='https://maps.app.goo.gl/DVqi6jwRYasPmT386?g_st=com.google.maps.preview.copy'">arrow_forward</button>
-                </a>
-            </li>
-            <li class="card-item swiper-slide">
-                <a href="reservation3.php" class="card-link">
-                    <img src="media/umanabali.jpg" alt="Card Image" class="card-image">
-                    <p class="badge marketer">
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star"></span>
-                    </p>
-                    <h2 class="card-title">Umana Bali Resorts</h2><br> 
-                    <p class="card-paragraph">A tranquil luxury resort set in lush beachfront gardens</p><br>
-                    <button class="card-button
-                    material-symbols-rounded" type="button" onclick="location.href='https://maps.app.goo.gl/8S2xq4vzGDoC6xz18?g_st=com.google.maps.preview.copy'">arrow_forward</button>
-                </a>
-            </li>
-            <li class="card-item swiper-slide">
-                <a href="reservation4.php" class="card-link">
-                    <img src="media/the bale nusa dua.jpg" alt="Card Image" class="card-image">
-                    <p class="badge gamer">
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star"></span>
-                    </p>
-                    <h2 class="card-title">The Balé, Nusa Dua - Bali</h2><br>
-                    <p class="card-paragraph">A tranquil and luxurious retreat - a tropical paradise</p><br>
-                    <button class="card-button
-                    material-symbols-rounded" type="button" onclick="location.href='https://maps.app.goo.gl/ucdRRcYwqxNQxmDr8?g_st=com.google.maps.preview.copy'">arrow_forward</button>
-                </a>
-            </li>
-            <li class="card-item swiper-slide">
-                <a href="reservation5.php" class="card-link">
-                    <img src="media/mercurebali.webp" alt="Card Image" class="card-image">
-                    <p class="badge editor">
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star"></span>
-                    </p>
-                    <h2 class="card-title">Mercure Bali Nusa Dua</h2><br>
-                    <p class="card-paragraph">located in the Nusa Dua area of Bali, known for its modern design and proximity to the beach.</p><br>
-                    <button class="card-button
-                    material-symbols-rounded" type="button" onclick="location.href='https://maps.app.goo.gl/LoQtFDPL2nJQQFuD9?g_st=com.google.maps.preview.copy'">arrow_forward</button>
-                </a>
-            </li>
+            <?php if (!$hotels): ?>
+                <p style="padding:1rem">Tidak ada hasil untuk “<?= htmlspecialchars($search) ?>”.</p>
+            <?php endif; ?>
+
+                <?php foreach ($hotels as $h): ?>
+                    <li class="card-item swiper-slide">
+    <a href="<?= $h['reservasi'] ?>" class="card-link">
+        <img src="<?= htmlspecialchars($h['image']) ?>"
+             alt="<?= htmlspecialchars($h['name']) ?>"
+             class="card-image">
+
+        <!-- rating bintang -->
+        <p class="badge designer">
+            <?php for ($i = 0; $i < $h['stars']; $i++): ?>
+                <span class="fa fa-star checked"></span>
+            <?php endfor; ?>
+            <?php for ($i = $h['stars']; $i < 5; $i++): ?>
+                <span class="fa fa-star"></span>
+            <?php endfor; ?>
+        </p>
+
+        <h2 class="card-title"><?= htmlspecialchars($h['name']) ?></h2><br>
+        <p class="card-paragraph"><?= htmlspecialchars($h['description']) ?></p><br>
+        <button class="card-button material-symbols-rounded" type="button">arrow_forward</button>
+    </a>
+</li>
+
+                <?php endforeach; ?>
         </ul>
+
 
         <div class="swiper-pagination"></div>
         <div class="swiper-slide-button swiper-button-prev"></div>
@@ -151,7 +132,7 @@ include 'views/header2.php';
     <div class="image-container">
         <img alt="Delicious dish with shrimp and garlic" height="700" src="media/resto.jpg" width="1200"/>
     <div class="text-content">
-     <h1>Best restaurants in Bali 202</h1>
+     <h1>Best restaurants in Bali 2025</h1>
      <p>Plan a visit to the Best of the Best winners in our Travellers' Choice Awards.</p>
      <a class="button" href="restaurant.php">Check out the list</a>
     </div>
