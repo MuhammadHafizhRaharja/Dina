@@ -18,6 +18,33 @@
 
 </head>
 <?php
+include 'CRUD/reservasi restoran/db.php';
+
+$search  = strtolower(trim($_GET['search'] ?? ''));
+$streets = [];
+
+if ($search === '') {
+    $sql  = "SELECT nama_jalan, deskripsi, gambar, link_maps
+             FROM dina_streets
+             ORDER BY nama_jalan ASC";
+    $stmt = $conn->prepare($sql);
+} else {
+    $sql  = "SELECT nama_jalan, deskripsi, gambar, link_maps
+             FROM dina_streets
+             WHERE LOWER(nama_jalan) LIKE ? OR LOWER(deskripsi) LIKE ?
+             ORDER BY nama_jalan ASC";
+    $like = "%$search%";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('ss', $like, $like);
+}
+
+$stmt->execute();
+$res = $stmt->get_result();
+$streets = $res->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
+?>
+
+<?php
 include 'views/header1.php';
 ?>
 
@@ -37,77 +64,42 @@ include 'views/header1.php';
         <div class="nav-item"><a href="restaurant.php" class="material-symbols-outlined">restaurant <p>Restaurant</p></a></div>
         <div class="nav-item"><a href="tourism.php" class="material-symbols-outlined">explore <p>Tourism</p></a></div>
     </div>
-    <div class="search-bar" data-aos="fade-down" data-aos-duration="900" data-aos-delay="400">
-        <i class="fas fa-search"></i>
-        <input type="text" placeholder="Tempat untuk dikunjungi, hal yang dapat dilakukan, hotel...">
-        <button>Cari</button>
-    </div>
+    <form class="search-bar" method="get" action="street.php">
+            <i class="fas fa-search"></i>
+            <input type="text" name="search"
+                value="<?= htmlspecialchars($search) ?>" placeholder="Search hotels in Bali...">
+            <button type="submit">Find</button>
+        </form>
 </div>
- <!--content-->
- <h2 class="title" data-aos="fade-up"
- data-aos-duration="500"
- data-aos-delay="100">Street in <Span style="color: maroon;">Bali</Span></h2>
-<div class="container swiper" data-aos="fade-up"
-data-aos-duration="900"
-data-aos-delay="400">
+ <!-- content -->
+<div class="container swiper" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="300">
     <div class="card-wrapper">
         <ul class="card-list swiper-wrapper">
-            <li class="card-item swiper-slide">
-                <a href="https://maps.app.goo.gl/9c7WAMWMPXJnRMdw7" class="card-link">
-                    <img src="Assets/ngurah rai.webp" alt="Bypass Ngurah Rai" class="card-image">
-                    <h2 class="card-title">Jl. Ngurah Rai</h2><br>
-                    <h3>Jalan utama di Bali, menghubungkan bandara dan kawasan wisata dengan nama diambil dari pahlawan I Gusti Ngurah Rai.</h3>
-                </a>
-                <button class="button" onclick="window.location.href='ngurahraistreet.php';">view more</button>
-            </li>
-            <li class="card-item swiper-slide">
-                <a href="https://maps.app.goo.gl/bnDNnRK6Ex9f5QGL8" class="card-link">
-                    <img src="Assets/tukad badung.webp" alt="Tukad Badung" class="card-image">
-                    <h2 class="card-title">Jl. Tukad Badung</h2><br>
-                    <h3>Berlokasi di Denpasar, dinamai dari sungai besar Tukad Badung dan dikelilingi area bisnis dan perkantoran.</h3>
-                   </a> 
-                   <button class="button" onclick="window.location.href='tukadbadungstreet.php';">view more</button>
-            </li>
-            <li class="card-item swiper-slide">
-                <a href="https://maps.app.goo.gl/yiQr4D2sAzQuvzU1A" class="card-link">
-                    <img src="Assets/tukad balian.webp" alt="Tukad Balian" class="card-image">
-                    <h2 class="card-title">Jl. Tukad Balian</h2><br>
-                    <h3>Jalan ini juga dinamai dari sungai Tukad Balian, dikelilingi area perumahan dan tempat kuliner.</h3>
-                </a>
-                <button class="button" onclick="window.location.href='tukadbalianstreet.php';">view more</button>
-            </li>
-            <li class="card-item swiper-slide">
-                <a href="https://maps.app.goo.gl/jpj8B37N28T5uSSX7" class="card-link">
-                    <img src="Assets/kertasari.webp" alt="Kertasari" class="card-image">
-                    <h2 class="card-title">Jl. Kertasari</h2><br>
-                    <h3>Terletak di area permukiman dan bisnis di Denpasar, dengan nama yang bermakna "makmur" atau "sejahtera."</h3>
-                </a>
-                <button class="button" onclick="window.location.href='kertasaristreet.php';">view more</button>
-            </li>
-            <li class="card-item swiper-slide">
-                <a href="https://maps.app.goo.gl/wgo5L6dX6Znc1VfcA" class="card-link">
-                    <img src="Assets/raya sesetan.webp" alt="Raya Sesetan" class="card-image">
-                    <h2 class="card-title">Jl. Raya Sesetan</h2><br>
-                    <h3>Jalan utama di wilayah Sesetan, Denpasar Selatan, dikenal dengan deretan toko, restoran, dan kantor.</h3>
-                </a>
-                <button class="button" onclick="window.location.href='rayasesetanstreet.php';">view more</button>
-            </li>
-            <li class="card-item swiper-slide">
-              <a href="https://maps.app.goo.gl/1BbkoTbwYeDW5Kqv5" class="card-link">
-                  <img src="Assets/pulau saelus.jpeg" alt="Pulau Saelus" class="card-image">
-                  <h2 class="card-title">Jl. Pulau Saelus</h2><br>
-                  <h3>Jalan di Denpasar yang menggunakan nama pulau di Indonesia, didominasi perumahan dan pusat bisnis.</h3>
-                </a>
-                <button class="button" onclick="window.location.href='saelusstreet.php';">view more</button>
-          </li>
-        </ul>
+            <?php if (!$streets): ?>
+                <p style="padding:1rem">Tidak ada hasil untuk “<?= htmlspecialchars($search) ?>”.</p>
+            <?php endif; ?>
 
+            <?php foreach ($streets as $s): ?>
+                <li class="card-item swiper-slide">
+                    <a href="<?= htmlspecialchars($s['link_maps']) ?>" class="card-link" target="_blank">
+                        <img src="<?= htmlspecialchars($s['gambar']) ?>"
+                             alt="<?= htmlspecialchars($s['nama_jalan']) ?>"
+                             class="card-image">
+
+                        <h2 class="card-title"><?= htmlspecialchars($s['nama_jalan']) ?></h2><br>
+                        <p class="card-paragraph"><?= htmlspecialchars($s['deskripsi']) ?></p><br>
+                        <button class="card-button material-symbols-rounded" type="button">arrow_forward</button>
+                    </a>
+                </li>
+            <?php endforeach; ?>
+        </ul>
 
         <div class="swiper-pagination"></div>
         <div class="swiper-slide-button swiper-button-prev"></div>
         <div class="swiper-slide-button swiper-button-next"></div>
     </div>
 </div>
+
 
 <!--Content2-->
 <h2 class="title"data-aos="fade-up"

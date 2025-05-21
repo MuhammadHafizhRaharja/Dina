@@ -293,7 +293,7 @@ body {
 }
 
 
-.card-list .card-link .card-title {
+.card-list .card-link .card-title{
    font-size: 1.19rem;
    color: #000;
    font-weight: 600;
@@ -336,7 +336,11 @@ body {
    color: #262833;
    font-size: 15px;
 }
-
+.card-paragraph{
+    color: black;
+    font-size: 15px;
+    margin-top: 5px;
+}
 .button{
    border: none;
    outline: none;
