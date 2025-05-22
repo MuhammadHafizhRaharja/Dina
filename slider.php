@@ -22,7 +22,7 @@ if ($search === '') {
 
 $stmt->execute();
 $res = $stmt->get_result();
-$hotels = $res->fetch_all(MYSQLI_ASSOC);
+$hotels = $res->fetch_all(MYSQLI_ASSOC);    
 $stmt->close();
 
 ?>

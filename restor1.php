@@ -57,7 +57,7 @@ include 'CRUD/reservasi restoran/db.php';
         </div>
 
         <div style="display: flex; gap: 10px;">
-            <select name="table" required>
+            <select name="table_number" required>
                 <option value="1">Table 1</option>
                 <option value="2">Table 2</option>
                 <option value="3">Table 3</option>
