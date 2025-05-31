@@ -71,7 +71,7 @@ if ($checkin && $checkout) {
             <!-- Form -->
             <div class="col-md-7" data-aos="fade-left" data-aos-duration="1500" data-aos-delay="300">
                 <h3 class="mb-4 border-start border-danger ps-3" style="text-align: center">Reservation Hotel</h3>
-                <form method="POST" action="">
+                <form method="POST" action="CRUD/reservasi_hotel/detail_pembayaran.php">
                     <input type="text" name="name" class="form-control mb-3 bg-dark text-white" placeholder="Your Name" required>
                     <input type="email" name="email" class="form-control mb-3 bg-dark text-white" placeholder="Your Email" required>
                     <input type="tel" name="phone" class="form-control mb-3 bg-dark text-white" placeholder="Phone Number" required>
@@ -85,7 +85,7 @@ if ($checkin && $checkout) {
                         </div>
                     </div>
 
-                    <select name="room_type" class="form-select mb-3 bg-dark text-white" onchange="this.form.submit()">
+                    <select name="room_type" class="form-select mb-3 bg-dark text-white">
                         <?php foreach ($roomTypes as $key => $room): ?>
                             <option value="<?= htmlspecialchars($key) ?>" <?= $selectedType == $key ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($room['name']) ?> - Rp<?= number_format($room['price'], 0, ',', '.') ?>/night
@@ -94,16 +94,9 @@ if ($checkin && $checkout) {
                     </select>
 
 
-                    <div class="row">
-                        <div class="col">
-                            <input type="text" class="form-control mb-3 bg-dark text-white" value="<?= $nightCount ?> Night(s)" disabled>
-                        </div>
-                        <div class="col">
-                            <input type="text" class="form-control mb-3 bg-dark text-white" value="Total: Rp<?= number_format($totalPrice, 0, ',', '.') ?>" disabled>
-                        </div>
-                    </div>
+                    
 
-                    <textarea class="form-control mb-3 bg-dark text-white" placeholder="Special Request (optional)" rows="3"></textarea>
+                    <textarea class="form-control mb-3 bg-dark text-white" name="special_request" placeholder="Special Request (optional)" rows="3"></textarea>
 
                     <div class="d-flex justify-content-end">
                         <a href="slider.php" class="btn btn-grey me-2">Back to Menu</a>
