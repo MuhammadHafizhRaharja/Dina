@@ -1,90 +1,67 @@
 <?php
-// Koneksi ke database
 include 'db.php';
 
-// Ambil data dari form
-$name = $_POST['name'] ?? '';
-$phone = $_POST['phone'] ?? '';
-$people = $_POST['people'] ?? '';
-$date = $_POST['date'] ?? '';
-$table = $_POST['table_number'] ?? ''; // Ambil data nomor meja
-$time = $_POST['time'] ?? '';
-$message = $_POST['message'] ?? '';
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $nama         = $_POST['nama'];
+    $telepon      = $_POST['telepon'];
+    $tanggal      = $_POST['tanggal'];
+    $jam          = $_POST['jam'];
+    $jumlah_orang = $_POST['jumlah_orang'];
+    $pesan        = $_POST['pesan'];
+    $id_meja      = $_POST['id_meja'];
+    $total_biaya  = $_POST['total_biaya'];
 
-// Pastikan table_number adalah angka atau set default jika kosong
-$table = isset($table) && is_numeric($table) ? $table : 0; // Atur default ke 0 jika kosong atau bukan angka
+    $stmt = $conn->prepare("
+        INSERT INTO reservasi 
+        (nama, telepon, tanggal, jam, jumlah_orang, pesan, id_meja, total_biaya) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    ");
 
-// Simpan ke database
-$stmt = $conn->prepare("INSERT INTO reservation (name, phone, people, date, table_number, time, message) VALUES (?, ?, ?, ?, ?, ?, ?)");
-$stmt->bind_param("ssissss", $name, $phone, $people, $date, $table, $time, $message);
+    $stmt->bind_param("sssssssi", $nama, $telepon, $tanggal, $jam, $jumlah_orang, $pesan, $id_meja, $total_biaya);
 
-if ($stmt->execute()) {
-    // Jika berhasil menyimpan data
+    if (!$stmt->execute()) {
+        die("Gagal menyimpan data: " . $stmt->error);
+    }
+
+    $stmt->close();
 } else {
-    echo "Terjadi kesalahan saat menyimpan data: " . $stmt->error;
+    header("Location: detail_pembayaran.php");
+    exit;
 }
-
-$stmt->close();
-$conn->close();
 ?>
 
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Struk Pembayaran</title>
-  <link rel="stylesheet" href="struk_pembayaran.css" media="all">
+  <title>Struk Pembayaran Restoran</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="struk_pembayaran.css">
 </head>
 <body>
 
-  <div class="receipt">
-    <h2>Struk Pembayaran</h2>
+  <div class="container">
+    <h2>Struk Pembayaran Restoran</h2>
+    <div class="status">Status: LUNAS</div>
 
-    <div class="info">
-      <div class="info-label">Nama</div>
-      <p class="info-value"><?= $name ?></p>
+    <p><span class="label">Nama:</span> <?= htmlspecialchars($nama) ?></p>
+    <p><span class="label">Telepon:</span> <?= htmlspecialchars($telepon) ?></p>
+    <p><span class="label">Tanggal Reservasi:</span> <?= htmlspecialchars($tanggal) ?></p>
+    <p><span class="label">Jam:</span> <?= htmlspecialchars($jam) ?></p>
+    <p><span class="label">Jumlah Orang:</span> <?= htmlspecialchars($jumlah_orang) ?></p>
+    <p><span class="label">Meja:</span> <?= htmlspecialchars($id_meja) ?></p>
+    <p><span class="label">Pesan:</span> <?= nl2br(htmlspecialchars($pesan)) ?></p>
+
+    <div class="total">Total: Rp<?= number_format($total_biaya, 0, ',', '.') ?></div>
+
+    <div class="thankyou">
+      Terima kasih telah melakukan reservasi!<br>
     </div>
 
-    <div class="info">
-      <div class="info-label">No. Telepon</div>
-      <div class="info-value"><?= $phone ?></div>
+    <div class="btn-group">
+      <button onclick="window.print()" class="btn btn-print">Cetak Struk</button>
+      <a href="../../restaurant.php"><button class="btn btn-back">Kembali ke Beranda</button></a>
     </div>
-
-    <div class="info">
-      <div class="info-label">Jumlah Orang</div>
-      <div class="info-value"><?= $people ?> orang</div>
-    </div>
-
-    <div class="info">
-      <div class="info-label">Tanggal</div>
-      <div class="info-value"><?= $date ?></div>
-    </div>
-
-    <div class="info">
-      <div class="info-label">Waktu</div>
-      <div class="info-value"><?= $time ?></div>
-    </div>
-
-    <div class="info">
-      <div class="info-label">Nomor Meja</div>
-      <div class="info-value">Meja <?= $table ?></div>
-    </div>
-
-    <div class="info">
-      <div class="info-label">Catatan</div>
-      <div class="info-value"><?= $message ?></div>
-    </div>
-
-    <div class="total">Total: Rp100.000</div>
-
-    <div class="thankyou">Reservasi berhasil!</div>
-    <div class="thankyou">Terima kasih <?= $name?> atas reservasi Anda!</div>
-
-    <div class="button-footer">
-    <button class="btn-print" onclick="window.print()">Cetak Struk</button>
-    <a href="../../restaurant.php" class="btn-back">Back to Home</a>
-  </div>
-
   </div>
 
 </body>

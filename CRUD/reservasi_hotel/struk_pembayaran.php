@@ -67,7 +67,7 @@ $conn->close();
 
     <div class="button-group">
       <button class="btn btn-print" onclick="window.print()">Cetak Struk</button>
-      <a href="index.php" class="btn btn-back">Kembali ke Menu</a>
+      <a href="../../slider.php" class="btn btn-back">Kembali ke Menu</a>
     </div>
   </div>
 </body>
