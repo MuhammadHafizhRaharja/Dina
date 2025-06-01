@@ -2,7 +2,6 @@
 include 'views/header1.php';
 session_start();
 
-// Check if the user is logged in
 if (!isset($_SESSION['id_user'])) {
     header("Location: Signin.php");
     exit();
@@ -24,7 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $tanggal = $_POST['tanggal'];
     $jumlah_tiket = $_POST['jumlah_tiket'];
 
-    // Insert booking into the database
     $stmt = $conn->prepare("INSERT INTO pemesanan_tiket (id_user, id_wisata, tanggal, jumlah_tiket) VALUES (?, ?, ?, ?)");
     $stmt->bind_param("iisi", $id_user, $id_wisata, $tanggal, $jumlah_tiket);
     $stmt->execute();
@@ -34,38 +32,62 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     exit();
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Detail Wisata - <?= htmlspecialchars($wisata['nama_wisata']) ?></title>
-    <link rel="stylesheet" href="style_pesan.css">
+    <title><?= htmlspecialchars($wisata['nama_wisata']) ?> - Bali</title>
     <link rel="stylesheet" href="detailtourism.css">
     <link rel="icon" type="logotype/png" href="Assets/logoerase.png">
 </head>
 <body>
-    <h1><?= htmlspecialchars($wisata['nama_wisata']) ?></h1>
-
-    <div class="tour-details">
-        <img class="image_toursim" src="<?= $wisata['foto_profil'] ?>" width="40" height="40" alt="Foto profil">
-        <p><?= htmlspecialchars($wisata['deskripsi']) ?></p>
-        <p>Harga: Rp <?= number_format($wisata['harga'], 0, ',', '.') ?> per tiket</p>
+    <div class="gallery" data-aos="fade-down" data-aos-duration="600" data-aos-delay="100">
+        <div class="main-photo">
+            <img src="<?= htmlspecialchars($wisata['foto_profil']) ?>" height="300" width="100%">
+            <div class="overlay">
+                <h1><?= htmlspecialchars($wisata['nama_wisata']) ?></h1>
+            </div>
+        </div>
     </div>
 
-    <h2>Pemesanan Tiket</h2>
-    <form method="POST">
-        <label>Tanggal Kunjungan:</label><br>
-        <input type="date" name="tanggal" required><br><br>
-
-        <label>Jumlah Tiket:</label><br>
-        <input type="number" name="jumlah_tiket" min="1" required><br><br>
-
-        <button type="submit">Pesan Tiket</button>
-    </form>
+    <div class="container" data-aos="fade-up" data-aos-duration="900" data-aos-delay="500">
+        <div class="content">
+            <h1>About</h1>
+            <p><?= htmlspecialchars($wisata['deskripsi']) ?></p>
+            <div class="details">
+                <div><i class="fas fa-map-marker-alt"></i> <?= htmlspecialchars($wisata['city']) ?></div>
+                <div><i class="fas fa-calendar-alt"></i> Start time: Check availability</div>
+                <div><i class="fas fa-mobile-alt"></i> Mobile ticket: Available</div>
+            </div>
+        </div>
+        <div class="sidebar">
+            <h2>From Rp.<?= number_format($wisata['harga'], 0, ',', '.') ?></h2>
+            <p class="price">price per person</p>
+            <p style="color: maroon;">Get your calendar to Explore</p>
+            <form method="POST">
+                <div class="date-picker">
+                    <i class="fas fa-calendar-alt"></i>
+                    <input type="date" name="tanggal" required>
+                </div>
+                <p class="price" style="color: maroon;">How many tickets</p>
+                <div class="traveler-picker">
+                    <i class="fas fa-user-friends"></i>
+                    <input type="number" name="jumlah_tiket" min="1" value="1" required>
+                </div>
+                <button type="submit" class="reserve-btn">Reserve Now</button>
+            </form>
+            <div class="free-cancellation">
+                <i class="fas fa-check-circle"></i>
+                <p>Free cancellation. Cancel anytime before your visit for full refund.</p>
+            </div>
+        </div>
+    </div>
 
     <div class="actions">
         <a href="riwayat_pemesanan.php" class="btn">Lihat Riwayat Pemesanan</a>
     </div>
 </body>
 </html>
+    <?php
+include 'views/footer1.php';
+?>

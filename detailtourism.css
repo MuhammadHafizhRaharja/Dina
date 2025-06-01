@@ -230,6 +230,27 @@
    display: none;
    margin: 0;
 }
+
+.actions {
+    text-align: start;
+    margin-left: 20px;
+}
+
+.actions a {
+    padding: 12px 25px;
+    background-color: maroon;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 16px;
+    
+}
+
+.actions a:hover {
+    background-color: #fff;
+    color: maroon;
+}
+
 @media (max-width: 768px) {
    .container {
        flex-direction: column;

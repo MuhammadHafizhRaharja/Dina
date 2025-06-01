@@ -24,12 +24,12 @@ $search  = strtolower(trim($_GET['search'] ?? ''));
 $wisata = [];   
 
 if ($search === '') {
-    $sql  = "SELECT nama_wisata, deskripsi, foto_profil, link_maps
+    $sql  = "SELECT nama_wisata, deskripsi, foto_profil, link_maps, link_detail
              FROM wisata
              ORDER BY nama_wisata ASC";
     $stmt = $conn->prepare($sql);
 } else {
-    $sql  = "SELECT nama_wisata, deskripsi, foto_profil, link_maps
+    $sql  = "SELECT nama_wisata, deskripsi, foto_profil, link_maps, link_detail
              FROM wisata
              WHERE LOWER(nama_wisata) LIKE ? OR LOWER(deskripsi) LIKE ?
              ORDER BY nama_wisata ASC";
@@ -87,11 +87,10 @@ $stmt->close();
 
                 <?php foreach ($wisata as $s) : ?>
                     <li class="card-item swiper-slide">
-                        <a href="<?= htmlspecialchars($s['link_maps']) ?>" class="card-link" target="_blank">
+                        <a href="<?= htmlspecialchars($s['link_detail']) ?>" class="card-link" target="_blank">
                             <img src="<?= htmlspecialchars($s['foto_profil']) ?>" alt="<?= htmlspecialchars($s['nama_wisata']) ?>" class="card-image">
                             <h2 class="card-title"><?= htmlspecialchars($s['nama_wisata']) ?></h2><br>
                             <p class="card-paragraph"><?= htmlspecialchars($s['deskripsi']) ?> </p><br>
-                            <button class="card-button material-symbols-rounded" type="button">arrow_forward</button>     
                         </a>
                     </li>
                     <?php endforeach; ?>

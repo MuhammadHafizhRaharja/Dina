@@ -1,86 +1,93 @@
-<html>
-<head>
-    <title>Batur Mountain, Bali</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <!--link font google-->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=arrow_forward" />
-    <!--link swiper css-->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
-    <!--link rating-->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link rel="stylesheet" href="detailtourism.css">
-    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
-    <link rel="icon" type="logoshape/png" href="Assets/logoerase.png">
-</head>
-
 <?php
-include 'header1.php';
-?>
+include 'views/header1.php';
+session_start();
 
-    <!--Content-->
+if (!isset($_SESSION['id_user'])) {
+    header("Location: Signin.php");
+    exit();
+}
+
+include 'db_connection.php';
+
+// Fetch the tourist site details
+$id_wisata = 4; // Replace with dynamic ID, e.g., from URL parameter
+$sql = "SELECT * FROM wisata WHERE id_wisata = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $id_wisata);
+$stmt->execute();
+$wisata = $stmt->get_result()->fetch_assoc();
+$stmt->close();
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $id_user = $_SESSION['id_user'];
+    $tanggal = $_POST['tanggal'];
+    $jumlah_tiket = $_POST['jumlah_tiket'];
+
+    $stmt = $conn->prepare("INSERT INTO pemesanan_tiket (id_user, id_wisata, tanggal, jumlah_tiket) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("iisi", $id_user, $id_wisata, $tanggal, $jumlah_tiket);
+    $stmt->execute();
+    $stmt->close();
+
+    header("Location: konfirmasi_pemesanan.php"); // Redirect to confirmation page
+    exit();
+}
+?>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title><?= htmlspecialchars($wisata['nama_wisata']) ?> - Bali</title>
+    <link rel="stylesheet" href="detailtourism.css">
+    <link rel="icon" type="logotype/png" href="Assets/logoerase.png">
+</head>
+<body>
     <div class="gallery" data-aos="fade-down" data-aos-duration="600" data-aos-delay="100">
         <div class="main-photo">
-            <img src="Assets/gunung batur2.jpg" height="300" width="2000">
+            <img src="<?= htmlspecialchars($wisata['foto_profil']) ?>" height="300" width="100%">
             <div class="overlay">
-                <h1>Batur Mountain</h1> 
-            </div>
-        </div>
-
-    <div class="container" data-aos="fade-up" data-aos-duration="900" data-aos-delay="500">
-        <div class="content">
-            <h1>About</h1>
-            <p>Mount Batur in Bali is a popular destination for nature lovers and adventure seekers, 
-                renowned for its stunning landscapes and unforgettable sunrise views. This active 
-                volcano, located in the Kintamani region, offers a unique trekking experience, with 
-                visitors often starting their climb early in the morning to reach the summit by dawn. 
-                The sunrise from the peak is mesmerizing, with golden hues lighting up the surrounding 
-                caldera and Lake Batur, creating a serene and magical atmosphere. Nearby, visitors can 
-                explore the natural hot springs, perfect for relaxing after a hike, or visit the Trunyan 
-                Village to learn about Bali's ancient culture and unique burial traditions. The 
-                Kintamani area also features local restaurants with panoramic views, where guests can 
-                enjoy Balinese cuisine while overlooking the breathtaking scenery. Mount Batur’s 
-                combination of natural beauty, adventure, and cultural experiences makes it one of 
-                Bali’s most captivating attractions.</p>
-            • <a href="#">Lowest price guarantee</a> • <a href="#">Reserve now & pay later</a> • <a href="#">Free cancellation</a>
-            <div class="details">
-                <div><i class="fas fa-user"></i> All ages</div>
-                <div><i class="fas fa-clock"></i> 10-15 minutes from Ngurah Rai international Ariport</div>
-                <div><i class="fas fa-calendar-alt"></i> Start time: Check availability</div>
-                <div><i class="fas fa-mobile-alt"></i> Mobile ticket: Available</div>
-                <div><i class="fas fa-language"></i> Live guide: English</div>
-            </div>
-        </div>
-        <div class="sidebar">
-            <h2>From Rp.100.000,00</h2>
-            <p class="price">price per person</p>
-            <p style="color: maroon;">Get your calendar to Explore</p>
-            <div class="date-picker">
-                <i class="fas fa-calendar-alt"></i>
-                <input type="date" >
-            </div>
-            <p class="price" style="color: maroon;">Number of Person</p>
-            <div class="traveler-picker">
-                <i class="fas fa-user-friends"></i>
-                <input type="number" value="2">
-            </div>
-            <div class="option">
-                <h3>Private Guided Sightseeing Day Tour of Bandung</h3>
-                <p>Pickup included</p>
-                <p>2 Adults x Rp.100.000,00</p>
-                <p>Total Rp.200.000,00</p>
-                <p>(Price includes taxes and booking fees)</p>
-            </div>
-            <button class="reserve-btn">Reserve Now</button>
-            <div class="free-cancellation">
-                <i class="fas fa-check-circle"></i>
-                <p>Free cancellation. Cancel anytime before Dec 6 for full refund.</p>
+                <h1><?= htmlspecialchars($wisata['nama_wisata']) ?></h1>
             </div>
         </div>
     </div>
 
+    <div class="container" data-aos="fade-up" data-aos-duration="900" data-aos-delay="500">
+        <div class="content">
+            <h1>About</h1>
+            <p><?= htmlspecialchars($wisata['deskripsi']) ?></p>
+            <div class="details">
+                <div><i class="fas fa-map-marker-alt"></i> <?= htmlspecialchars($wisata['city']) ?></div>
+                <div><i class="fas fa-calendar-alt"></i> Start time: Check availability</div>
+                <div><i class="fas fa-mobile-alt"></i> Mobile ticket: Available</div>
+            </div>
+        </div>
+        <div class="sidebar">
+            <h2>From Rp.<?= number_format($wisata['harga'], 0, ',', '.') ?></h2>
+            <p class="price">price per person</p>
+            <p style="color: maroon;">Get your calendar to Explore</p>
+            <form method="POST">
+                <div class="date-picker">
+                    <i class="fas fa-calendar-alt"></i>
+                    <input type="date" name="tanggal" required>
+                </div>
+                <p class="price" style="color: maroon;">How many tickets</p>
+                <div class="traveler-picker">
+                    <i class="fas fa-user-friends"></i>
+                    <input type="number" name="jumlah_tiket" min="1" value="1" required>
+                </div>
+                <button type="submit" class="reserve-btn">Reserve Now</button>
+            </form>
+            <div class="free-cancellation">
+                <i class="fas fa-check-circle"></i>
+                <p>Free cancellation. Cancel anytime before your visit for full refund.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="actions">
+        <a href="riwayat_pemesanan.php" class="btn">Lihat Riwayat Pemesanan</a>
+    </div>
+</body>
+</html>
     <?php
 include 'views/footer1.php';
 ?>
