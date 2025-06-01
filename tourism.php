@@ -18,6 +18,30 @@
 </head>
 <?php
 include 'views/header1.php';
+include 'CRUD/reservasi restoran/db.php';
+
+$search  = strtolower(trim($_GET['search'] ?? ''));
+$wisata = [];   
+
+if ($search === '') {
+    $sql  = "SELECT nama_wisata, deskripsi, foto_profil, link_maps
+             FROM wisata
+             ORDER BY nama_wisata ASC";
+    $stmt = $conn->prepare($sql);
+} else {
+    $sql  = "SELECT nama_wisata, deskripsi, foto_profil, link_maps
+             FROM wisata
+             WHERE LOWER(nama_wisata) LIKE ? OR LOWER(deskripsi) LIKE ?
+             ORDER BY nama_wisata ASC";
+    $like = "%$search%";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('ss', $like, $like);
+}
+
+$stmt->execute();
+$res = $stmt->get_result();
+$wisata = $res->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
 ?>
 
 <!--fitur-->
@@ -35,11 +59,12 @@ include 'views/header1.php';
             <div class="nav-item"><a href="restaurant.php" class="material-symbols-outlined">restaurant <p>Restaurant</p></a></div>
             <div class="nav-item on"><a href="tourism.php" class="material-symbols-outlined">explore <p>Tourism</p></a></div>
         </div>
-        <div class="search-bar" data-aos="fade-down" data-aos-duration="900" data-aos-delay="400">
+        <form class="search-bar" method="get" action="tourism.php">
             <i class="fas fa-search"></i>
-            <input type="text" placeholder="Tempat untuk dikunjungi, hal yang dapat dilakukan, hotel...">
-            <button>Cari</button>
-        </div>
+            <input type="text" name="search"
+                value="<?= htmlspecialchars($search) ?>" placeholder="Search destinations in Bali...">
+            <button type="submit">Find</button>
+        </form>
     </div>
 
  <!--top 1 of the week bar-->
@@ -53,49 +78,24 @@ include 'views/header1.php';
 
 <!--Content-->
 <h2 class="title" data-aos="fade-up">Wonderful <Span style="color: maroon;">Bali</Span></h2>
-<div class="container swiper" data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
+<div class="container swiper" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="300">
     <div class="card-wrapper">
         <ul class="card-list swiper-wrapper">
-            <li class="card-item swiper-slide">
-                <a href="kutatourism.php" class="card-link">
-                    <img src="Assets/kuta.jpg" alt="Kuta" class="card-image">
-                    <i href="https://maps.app.goo.gl/4yeYbzcsf45B7CJi6" class="material-symbols-outlined" style="position: absolute;">explore</i>
-                    <h2 class="card-title">Pantai Kuta</h2><br>
-                    <h3>Pantai populer dengan ombak yang cocok untuk berselancar dan pemandangan matahari terbenam yang indah.</h3>
-                </a>
-                
-            </li>
-            <li class="card-item swiper-slide">
-                <a href="tanahlottourism.php" class="card-link">
-                    <img src="Assets/tanah lot.jpg" alt="Tanah Lot" class="card-image">
-                    <h2 class="card-title">Tanah Lot</h2><br>
-                    <h3>Pura ikonik yang terletak di atas batu karang di tepi laut, populer untuk melihat matahari terbenam.</h3>
-                </a>
-            </li>
-            <li class="card-item swiper-slide">
-                <a href="uluwatutourism.php" class="card-link">
-                    <img src="Assets/uluwatu.jpg" alt="uluwatu" class="card-image">
-                    <h2 class="card-title">Uluwatu</h2><br>
-                    <h3>Pura yang berada di tebing tinggi dengan pemandangan samudra dan pertunjukan tari Kecak.</h3>
-                </a>
-            </li>
-            <li class="card-item swiper-slide">
-                <a href="gunungbaturtourism.php" class="card-link">
-                    <img src="Assets/gunung batur.jpg" alt="gunung batur" class="card-image">
-                    <h2 class="card-title">Gunung Batur</h2><br>
-                    <h3>Tempat trekking favorit untuk melihat matahari terbit dari puncak gunung berapi.</h3>
-                </a>
-            </li>
-            <li class="card-item swiper-slide">
-              <a href="nusaduatourism.php" class="card-link">
-                  <img src="Assets/nusa dua.jpg" alt="nusa dua" class="card-image">
-                  <h2 class="card-title">Pantai Nusa Dua</h2><br>
-                  <h3>Kawasan resor dengan pantai pasir putih yang cocok untuk bersantai, snorkeling, dan berbagai aktivitas air.</h3>
-               </a>   
-          </li>
+            <?php if (!$wisata): ?>
+                <p style="padding:1rem">Tidak ada hasil untul "<?= htmlspecialchars($search) ?>".</p>
+                <?php endif; ?>
+
+                <?php foreach ($wisata as $s) : ?>
+                    <li class="card-item swiper-slide">
+                        <a href="<?= htmlspecialchars($s['link_maps']) ?>" class="card-link" target="_blank">
+                            <img src="<?= htmlspecialchars($s['foto_profil']) ?>" alt="<?= htmlspecialchars($s['nama_wisata']) ?>" class="card-image">
+                            <h2 class="card-title"><?= htmlspecialchars($s['nama_wisata']) ?></h2><br>
+                            <p class="card-paragraph"><?= htmlspecialchars($s['deskripsi']) ?> </p><br>
+                            <button class="card-button material-symbols-rounded" type="button">arrow_forward</button>     
+                        </a>
+                    </li>
+                    <?php endforeach; ?>
         </ul>
-
-
         <div class="swiper-pagination"></div>
     </div>
 </div>

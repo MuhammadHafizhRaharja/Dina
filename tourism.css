@@ -416,7 +416,9 @@ body {
    align-content: end;
    position: fixed;
 }
-
+.card-paragraph {
+    color: #000;
+}
 .footer{
    color: #fff;
    text-align: center;

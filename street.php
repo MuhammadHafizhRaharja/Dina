@@ -67,7 +67,7 @@ include 'views/header1.php';
     <form class="search-bar" method="get" action="street.php">
             <i class="fas fa-search"></i>
             <input type="text" name="search"
-                value="<?= htmlspecialchars($search) ?>" placeholder="Search hotels in Bali...">
+                value="<?= htmlspecialchars($search) ?>" placeholder="Search streets in Bali...">
             <button type="submit">Find</button>
         </form>
 </div>
