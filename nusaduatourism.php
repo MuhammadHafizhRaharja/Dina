@@ -18,13 +18,16 @@ $stmt->execute();
 $wisata = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
+$username = $_SESSION['username']; // Pastikan username disimpan di session saat login
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id_user = $_SESSION['id_user'];
     $tanggal = $_POST['tanggal'];
     $jumlah_tiket = $_POST['jumlah_tiket'];
+    $total_harga = $jumlah_tiket * $wisata['harga']; //Menghitung total
 
-    $stmt = $conn->prepare("INSERT INTO pemesanan_tiket (id_user, id_wisata, tanggal, jumlah_tiket) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("iisi", $id_user, $id_wisata, $tanggal, $jumlah_tiket);
+    $stmt = $conn->prepare("INSERT INTO pemesanan_tiket (id_user, id_wisata, tanggal, jumlah_tiket, total_harga) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param("iisid", $id_user, $id_wisata, $tanggal, $jumlah_tiket, $total_harga);
     $stmt->execute();
     $stmt->close();
 
@@ -65,6 +68,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <p class="price">price per person</p>
             <p style="color: maroon;">Get your calendar to Explore</p>
             <form method="POST">
+                <div class="user-info" style="margin-top:1rem;">
+                    <strong>Username:</strong> <?= htmlspecialchars($username) ?><br>
+                </div>
                 <div class="date-picker">
                     <i class="fas fa-calendar-alt"></i>
                     <input type="date" name="tanggal" required>
@@ -72,7 +78,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <p class="price" style="color: maroon;">How many tickets</p>
                 <div class="traveler-picker">
                     <i class="fas fa-user-friends"></i>
-                    <input type="number" name="jumlah_tiket" min="1" value="1" required>
+                    <input id="jumlah_tiket" type="number" name="jumlah_tiket" min="1" value="1" required>
+                </div>
+                <div class="traveler-picker" style="color: maroon;">
+                 <strong>Total Harga: </strong>
+                 <span id="total_harga">Rp.<?= number_format($wisata['harga'], 0, ',', '.') ?></span>
                 </div>
                 <button type="submit" class="reserve-btn">Reserve Now</button>
             </form>
@@ -91,3 +101,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <?php
 include 'views/footer1.php';
 ?>
+<script>
+    const harga = <?= (int)$wisata['harga'] ?>;
+    const jumlahTiket = document.getElementById('jumlah_tiket');
+    const totalHarga = document.getElementById('total_harga');
+
+    function updateTotalHarga() {
+        const qty = parseInt(jumlahTiket.value) || 1;
+        const total = harga * qty;
+        totalHarga.textContent = 'Rp.' + total.toLocaleString('id-ID');
+    }
+
+    jumlahTiket.addEventListener('input', updateTotalHarga);
+    window.addEventListener('DOMContentLoaded', updateTotalHarga);
+</script>
