@@ -1,218 +1,180 @@
 <?php
 include 'CRUD/reservasi restoran/db.php';
 
-$biaya_per_orang = 100000;
-$pesan_error = "";
-$pesan_sukses = "";
+// Misal hotel yang dipilih/ditampilkan adalah hotel_id
+$hotel_id = 5;
 
-// Cek jika form disubmit
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $nama = isset($_POST['nama']) ? $_POST['nama'] : '';
-    $telepon = isset($_POST['telepon']) ? $_POST['telepon'] : '';
-    $tanggal = isset($_POST['tanggal']) ? $_POST['tanggal'] : '';
-    $jam = isset($_POST['jam']) ? $_POST['jam'] : '';
-    $jumlah_orang = isset($_POST['jumlah_orang']) ? intval($_POST['jumlah_orang']) : 0;
-    $pesan = isset($_POST['pesan']) ? $_POST['pesan'] : '';
-    $id_meja = isset($_POST['id_meja']) ? intval($_POST['id_meja']) : 0;
+// Ambil room types dari database untuk hotel ini
+$sql = "SELECT type_key, name, price FROM room_types WHERE hotel_id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $hotel_id);
+$stmt->execute();
+$result = $stmt->get_result();
 
-    $total_biaya = $jumlah_orang * $biaya_per_orang;
-
-    if (empty($jam)) {
-        $pesan_error = "Jam reservasi belum dipilih.";
-    } else {
-        // Cek konflik jadwal
-        $cek = $conn->prepare("SELECT * FROM reservasi WHERE tanggal=? AND jam=? AND id_meja=?");
-        $cek->bind_param("ssi", $tanggal, $jam, $id_meja);
-        $cek->execute();
-        $result = $cek->get_result();
-
-        if ($result->num_rows > 0) {
-            $pesan_error = "Meja sudah dipesan pada tanggal dan jam tersebut.";
-        } else {
-            // Simpan data reservasi
-            $stmt = $conn->prepare("INSERT INTO reservasi (nama, telepon, tanggal, jam, jumlah_orang, pesan, id_meja, total_biaya) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("sssssisi", $nama, $telepon, $tanggal, $jam, $jumlah_orang, $pesan, $id_meja, $total_biaya);
-            if ($stmt->execute()) {
-                $pesan_sukses = "Reservasi berhasil disimpan.";
-            } else {
-                $pesan_error = "Gagal menyimpan reservasi.";
-            }
-        }
-    }
+$roomTypes = [];
+while ($row = $result->fetch_assoc()) {
+    $roomTypes[$row['type_key']] = [
+        'name' => $row['name'],
+        'price' => $row['price']
+    ];
 }
+$stmt->close();
 
-// Ambil daftar meja
-$meja_query = $conn->query("SELECT * FROM meja");
-$meja_list = [];
-while ($row = $meja_query->fetch_assoc()) {
-    $meja_list[] = $row;
+// Ambil data dari form / default
+$selectedType = $_POST['room_type'] ?? array_key_first($roomTypes); // default ke key pertama
+$checkin = $_POST['checkin'] ?? '';
+$checkout = $_POST['checkout'] ?? '';
+
+$pricePerNight = $roomTypes[$selectedType]['price'] ?? 0;
+
+$nightCount = 0;
+$totalPrice = 0;
+
+if ($checkin && $checkout) {
+    $start = new DateTime($checkin);
+    $end = new DateTime($checkout);
+    $interval = $start->diff($end);
+    $nightCount = max(1, $interval->days);
+    $totalPrice = $nightCount * $pricePerNight;
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="id">
+<!doctype html>
+<html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Reservasi Restoran</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #f1f3f5;
-            margin: 0;
-            padding: 40px;
-        }
-
-        .container {
-            max-width: 700px;
-            margin: auto;
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
-            padding: 30px 40px;
-        }
-
-        h2 {
-            margin-bottom: 25px;
-            color: #2f3640;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            font-weight: 500;
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            font-size: 15px;
-            transition: border 0.2s ease;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: #4CAF50;
-        }
-
-        .row {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .row .form-group {
-            flex: 1;
-        }
-
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 14px;
-            width: 100%;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #43a047;
-        }
-
-        .alert {
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-
-        .alert-success {
-            background-color: #e6f4ea;
-            color: #2e7d32;
-        }
-
-        .alert-error {
-            background-color: #fdecea;
-            color: #c62828;
-        }
-    </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="logotype/png" href="Assets/logoerase.png">
+    <title>DINA</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <link rel="stylesheet" href="reservation.css">
 </head>
-<body>
-    <div class="container">
-        <h2>Reservasi Restoran</h2>
 
-        <?php if ($pesan_sukses): ?>
-            <div class="alert alert-success"><?= $pesan_sukses ?></div>
-        <?php elseif ($pesan_error): ?>
-            <div class="alert alert-error"><?= $pesan_error ?></div>
-        <?php endif; ?>
+<?php include 'views/header2.php'; ?>
 
-        <form method="post">
-            <div class="row">
-                <div class="form-group">
-                    <label>Nama Lengkap</label>
-                    <input type="text" name="nama" required>
-                </div>
-                <div class="form-group">
-                    <label>Nomor Telepon</label>
-                    <input type="text" name="telepon" required>
-                </div>
+<section class="checkout py-5" style="background-color: #000; color: white;">
+    <div class="container px-4">
+        <div class="row align-items-center">
+            <!-- Info Hotel -->
+            <div class="col-md-3 mb-4 text-center" data-aos="fade-right" data-aos-duration="1500" data-aos-delay="300">
+                <h2 class="mb-3" style="text-align: center">Mercure Bali Nusa Dua</h2>
+                <img src="media/mercurebali.webp" alt="Room Image" class="img-fluid rounded mb-3" width="300px">
+                <p><strong>Location:</strong><br>Jalan Nusa Dua Selatan Lot Sw 03, Jl. Nusa Dua, Badung Regency, Bali 80363</p>
+                <p><strong>Opening Hours:</strong><br>12 Hours, Monday to Sunday</p>
             </div>
 
-            <div class="form-group">
-                <label>Tanggal Reservasi</label>
-                <input type="date" name="tanggal" required>
-            </div>
+            <!-- Form -->
+            <div class="col-md-7" data-aos="fade-left" data-aos-duration="1500" data-aos-delay="300">
+                <h3 class="mb-4 border-start border-danger ps-3 text-center">Reservation Hotel</h3>
+                <form method="POST" action="CRUD/reservasi_hotel/detail_pembayaran.php">
+                    <input type="text" name="name" class="form-control mb-3 bg-dark text-white" placeholder="Your Name" required>
+                    <input type="email" name="email" class="form-control mb-3 bg-dark text-white" placeholder="Your Email" required>
+                    <input type="tel" name="phone" class="form-control mb-3 bg-dark text-white" placeholder="Phone Number" required>
 
-            <div class="form-group">
-                <label>Pilih Jam</label>
-                <select name="jam" required>
-                    <option value="">-- Pilih Jam --</option>
-                    <option value="11:00">11:00</option>
-                    <option value="12:00">12:00</option>
-                    <option value="13:00">13:00</option>
-                    <option value="14:00">14:00</option>
-                    <option value="15:00">15:00</option>
-                    <option value="16:00">16:00</option>
-                    <option value="17:00">17:00</option>
-                    <option value="18:00">18:00</option>
-                    <option value="19:00">19:00</option>
-                    <option value="20:00">20:00</option>
-                </select>
-            </div>
+                    <div class="row">
+                        <div class="col">
+                            <input type="date" name="checkin" class="form-control mb-3 bg-dark text-white" value="<?= $checkin ?>" required>
+                        </div>
+                        <div class="col">
+                            <input type="date" name="checkout" class="form-control mb-3 bg-dark text-white" value="<?= $checkout ?>" required>
+                        </div>
+                    </div>
 
-            <div class="form-group">
-                <label>Jumlah Orang</label>
-                <input type="number" name="jumlah_orang" min="1" required>
-            </div>
+                    <select name="room_type" class="form-select mb-3 bg-dark text-white" required>
+                        <?php foreach ($roomTypes as $key => $room): ?>
+                            <option value="<?= htmlspecialchars($key) ?>" <?= $selectedType == $key ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($room['name']) ?> - Rp<?= number_format($room['price'], 0, ',', '.') ?>/night
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
 
-            <div class="form-group">
-                <label>Pesan / Catatan Khusus</label>
-                <textarea name="pesan" placeholder="Contoh: Kursi dekat jendela, membawa anak kecil, dll..."></textarea>
-            </div>
+                    <!-- Tambahan penting -->
+                    <input type="hidden" name="hotel_id" value="<?= $hotel_id ?>">
 
-            <div class="form-group">
-                <label>Pilih Meja</label>
-                <select name="id_meja" required>
-                    <option value="">-- Pilih Meja --</option>
-                    <?php foreach ($meja_list as $meja): ?>
-                        <option value="<?= $meja['id_meja'] ?>">
-                            <?= $meja['nama_meja'] ?> (Kapasitas: <?= $meja['kapasitas'] ?> orang)
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
+                    <textarea class="form-control mb-3 bg-dark text-white" name="special_request" placeholder="Special Request (optional)" rows="3"></textarea>
 
-            <button type="submit">Pesan Sekarang</button>
-        </form>
+                    <div class="d-flex justify-content-end">
+                        <a href="slider.php" class="btn btn-grey me-2">Back to Menu</a>
+                        <button type="submit" class="btn btn-maroon">Book Now</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-</body>
-</html>
+</section>
+
+<!--Review-->
+    <div class="reviews-container" data-aos="fade-down" data-aos-duration="1200" data-aos-delay="300">
+        <div class="review-card" >
+            <div class="review-header">
+                <div class="stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+
+            <div class="review-content">
+                Hotel ini sangat memuaskan. Kamar bersih, pelayanan ramah, fasilitas lengkap, dan sarapan lezat. Lokasi strategis memudahkan akses ke berbagai tempat wisata.
+            </div>
+
+            <div class="review-footer">
+                <img alt="Profile picture of @R450GCarnauld" height="40" src="about us/images/Foto apis.jpg" width="40"/>
+                    <div class="username">apis@gmail.com</div>
+                    <div class="date">3 bulan lalu</div>
+            </div>
+        </div>
+
+        <div class="review-card">
+            <div class="review-header">
+                <div class="stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+             </div>
+
+            <div class="review-content">
+                Lokasi hotel sangat strategis, dekat tempat wisata. Pelayanan staf sangat profesional, kamar selalu bersih dan nyaman, serta suasana hotel tenang. Ingin kembali lagi
+            </div>
+
+            <div class="review-footer">
+                <img alt="Profile picture of @846rapha_lm" height="40" src="about us/images/darren2.jpg" width="40"/>
+                    <div class="username">daren@gmail.com</div>
+                    <div class="date">3 bulan lalu</div>
+            </div>
+        </div>
+
+        <div class="review-card">
+            <div class="review-header">
+                <div class="stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+
+            <div class="review-content">
+                Pengalaman menginap yang menyenangkan. Kamar nyaman dengan pemandangan indah. Wi-Fi stabil, kolam renang bersih. Sangat direkomendasikan!
+            </div>
+
+            <div class="review-footer">
+                <img alt="Profile picture of @R450GCarnauld" height="40" src="about us/images/dwiki.jpg" width="40"/>
+                    <div class="username">afdikk@gmail.com</div>
+                    <div class="date">3 bulan lalu</div>
+            </div>
+        </div>
+    </div>
+
+<?php include 'views/footer3.php'; ?>

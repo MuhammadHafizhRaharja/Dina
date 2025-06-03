@@ -1,3 +1,33 @@
+<?php
+include 'CRUD/reservasi restoran/db.php';
+
+$search  = strtolower(trim($_GET['search'] ?? ''));
+$hotels  = [];                     // <-- inisialisasi di sini
+
+if ($search === '') {
+    $sql  = "SELECT reservasi,name,image,description,stars
+             FROM hotels WHERE city='Bandung'
+             ORDER BY stars DESC, name";
+    $stmt = $conn->prepare($sql);
+} else {
+    $sql  = "SELECT reservasi,name,image,description,stars
+             FROM hotels
+             WHERE city='Bandung'
+               AND (LOWER(name) LIKE ? OR LOWER(description) LIKE ?)
+             ORDER BY stars DESC";
+    $like = "%$search%";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('ss', $like, $like);
+}
+
+$stmt->execute();
+$res = $stmt->get_result();
+$hotels = $res->fetch_all(MYSQLI_ASSOC);    
+$stmt->close();
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,126 +44,10 @@
     <link rel="icon" type="logotype/png" href="Assets/logoerase.png">
     <title>Hotel</title>
 </head>
-<body>
-
-  <!-- Navbar -->
-  <header class="header" id="header">
-    <nav class="nav container">
-        <a href="userhomepage.php" class="nav__logo">
-            <img src="assets/logoerase.png" alt="Logo">
-        </a>
-        <div class="nav__menu" id="nav-menu">
-            <ul class="nav__list" id="nav-menu">
-                <li class="nav__item">
-                    <a href="userhomepage.php" class="nav__link active-link">Home</a>
-                </li>
-
-                <li class="nav__item">
-                    <a href="#about" class="nav__link">About</a>
-                </li>
-
-                <li class="nav__item">
-                    <a href="#popular" class="nav__link">Popular</a>
-                </li>
-                
-                <li class="nav__item">
-                    <a href="#explore" class="nav__link">Explore</a>
-                </li>
-
-                <li class="nav__item nav__item--desktop">
-                    <div class="navbar-profile">
-                      <img
-                        src="about us/images/Foto apis.jpg"
-                        alt="profile-image"
-                        id="menu-image"
-                      />
-                    </div>
-                  </li>
-                
-                  <li class="nav__item nav__item--mobile">
-                    <a href="#myprofile" class="nav__link">My Profile</a>
-                  </li>
-            </ul>
-
-            
-
-              <div class="menu">
-                <ul>
-                  <li>
-                    <i class="material-icons-outlined">account_circle</i>
-                    My Profile
-                  </li>
-                  <li>
-                    <i class="material-icons-outlined">settings</i>
-                    Account Settings
-                  </li>
-                </ul>
-                <hr />
-        
-                <ul>
-                  <li>
-                    <i class="material-icons-outlined">analytics</i>
-                    Analytics
-                  </li>
-                  <li>
-                    <i class="material-icons-outlined">mail</i>
-                    Inbox
-                  </li>
-                </ul>
-                <hr />
-        
-                <ul>
-                  <span style="color: white; font-size: 1.1rem">Switch Accounts</span>
-                  <li
-                    style="
-                      margin-top: 10px;
-                      margin-bottom: 10px;
-                      background-color: #31363f;
-                    "
-                  >
-                    <img
-                      src="about us/images/Foto apis.jpg"
-                      alt="profile-image"
-                      class="account-profile"
-                    />
-                    <div class="accounts">
-                      <span style="color: white">Muhammad Hafizh Raharja</span>
-                      <span>Hafizh@Gmail.com</span>
-                    </div>
-                  </li>
-                  <li>
-                    <img
-                      src="about us/images/darren.jpeg"
-                      alt="profile-image"
-                      class="account-profile"
-                    />
-                    <div class="accounts">
-                      <span style="color: white">Darren</span>
-                      <span>Darren@Gmail.com</span>
-                    </div>
-                  </li>
-                </ul>
-        
-                <ul>
-                    <a href="Index.php">
-                  <li class="all-account">
-                    <i class="material-icons-outlined">logout</i>
-                    Sign out all accounts
-                  </li>
-                </ul>
-            </a>
-              </div>
-
-            <div class="nav__close" id="nav-close">
-                <i class="ri-close-line"></i>
-            </div>
-        </div>
-
-        <div class="nav__toggle" id="nav-toggle">
-            <i class="ri-menu-line"></i>
-        </div>
-    </nav>
-</header>
+    
+<?php
+include 'views/header2.php';
+?>
 
     <!--search bar-->
     <div class="search">
@@ -150,11 +64,13 @@
             <div class="nav-item"><a href="restaurantBandung.php" class="material-symbols-outlined">restaurant <p>Restaurant</p></a></div>
             <div class="nav-item"><a href="tourismbandung.php" class="material-symbols-outlined">explore <p>Tourism</p></a></div>
         </div>
-        <div class="search-bar">
+        <form class="search-bar" method="get" action="hotelBandung.php">
             <i class="fas fa-search"></i>
-            <input type="text" placeholder="Places to visit, things to do, hotels...">
-            <button>Find</button>
-        </div>
+            <input type="text" name="search"
+                value="<?= htmlspecialchars($search) ?>" placeholder="Search hotels in Bandung...">
+            <button type="submit">Find</button>
+        </form>
+
     </div>
 
     <div class="banner">
@@ -162,101 +78,49 @@
             <source src="media/Bandung.mp4">
         </video>
         <div class="banner-text" data-aos="fade-up" data-aos-duration="900" data-aos-delay="400">
-            <h1>BANDUNG</h1>
+            <h1>Bandung</h1>
             <p>Bandung is the capital city of West Java Province, Indonesia, known as the "City of Flowers" and the "Paris of Java" for its natural beauty and cool, 
-                serene atmosphere. The city is situated in a basin surrounded by mountains, providing a cooler climate compared to other cities in Indonesia.
-            </p>
+                serene atmosphere. The city is situated in a basin surrounded by mountains, providing a cooler climate compared to other cities in Indonesia. </p>
         </div>
     </div>
 
  <div id="container">
 
- <h2 class="title" data-aos="fade-down" data-aos-duration="1000" data-aos-delay="300">Recommended Hotels in <Span style="color: maroon;">Bandung</Span></h2>
+ <h2 class="title" data-aos="fade-down" data-aos-duration="1000" data-aos-delay="300">Recommended Resorts in <Span style="color: maroon;">Bandung</Span></h2>
  <!--content-->
 <div class="container swiper" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="300">
     <div class="card-wrapper">
         <ul class="card-list swiper-wrapper">
-            <li class="card-item swiper-slide">
-                <a href="reservbh1.php" class="card-link">
-                    <img src="media/hotel1.jpg" alt="Card Image" class="card-image">
-                    <p class="badge designer">
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star"></span>
-                    </p>
-                    <h2 class="card-title">GH Universal Hotel</h2><br>
-                    <p class="card-paragraph">Hotel with European architectural design, offers a luxurious and romantic atmosphere.</p><br>
-                    <button class="card-button
-                    material-symbols-rounded" type="button" onclick="location.href='https://maps.app.goo.gl/7vszya5GZdRFgg4q9?g_st=com.google.maps.preview.copy'">arrow_forward</button>
-                </a>
-            </li>
-            <li class="card-item swiper-slide">
-                <a href="reservbh2.php" class="card-link">
-                    <img src="media/hotel2.jpg" alt="Card Image" class="card-image">
-                    <p class="badge developer">
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star"></span>
-                    </p>
-                    <h2 class="card-title">Padma Hotel Bandung</h2><br>
-                    <p class="card-paragraph">Surrounded by green hills, this hotel provides a peaceful and exclusive stay.</p><br>
-                    <button class="card-button
-                    material-symbols-rounded" type="button" onclick="location.href='https://maps.app.goo.gl/DVqi6jwRYasPmT386?g_st=com.google.maps.preview.copy'">arrow_forward</button>
-                </a>
-            </li>
-            <li class="card-item swiper-slide">
-                <a href="reservbh3.php" class="card-link">
-                    <img src="media/hotel3.jpg" alt="Card Image" class="card-image">
-                    <p class="badge marketer">
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star"></span>
-                    </p>
-                    <h2 class="card-title">Crowne Plaza Bandung</h2><br> 
-                    <p class="card-paragraph">This four-star hotel offers modern luxury with easy access to various tourist destinations.</p><br>
-                    <button class="card-button
-                    material-symbols-rounded" type="button" onclick="location.href='https://maps.app.goo.gl/8S2xq4vzGDoC6xz18?g_st=com.google.maps.preview.copy'">arrow_forward</button>
-                </a>
-            </li>
-            <li class="card-item swiper-slide">
-                <a href="reservbh4.php" class="card-link">
-                    <img src="media/hotel4.jpeg" alt="Card Image" class="card-image">
-                    <p class="badge gamer">
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star"></span>
-                    </p>
-                    <h2 class="card-title">De Braga by Artotel</h2><br>
-                    <p class="card-paragraph">Modern hotel located on Braga walk, carrying the concept of contemporary art</p><br>
-                    <button class="card-button
-                    material-symbols-rounded" type="button" onclick="location.href='https://maps.app.goo.gl/ucdRRcYwqxNQxmDr8?g_st=com.google.maps.preview.copy'">arrow_forward</button>
-                </a>
-            </li>
-            <li class="card-item swiper-slide">
-                <a href="reservbh5.php" class="card-link">
-                    <img src="media/hotel5.webp" alt="Card Image" class="card-image">
-                    <p class="badge editor">
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star checked"></span>
-                        <span class="fa fa-star"></span>
-                    </p>
-                    <h2 class="card-title">The Trans Luxury Hotel</h2><br>
-                    <p class="card-paragraph">This five-star hotel in the Trans Studio Bandung area has premium facilities.</p><br>
-                    <button class="card-button
-                    material-symbols-rounded" type="button" onclick="location.href='https://maps.app.goo.gl/LoQtFDPL2nJQQFuD9?g_st=com.google.maps.preview.copy'">arrow_forward</button>
-                </a>
-            </li>
+            <?php if (!$hotels): ?>
+                <p style="padding:1rem">Tidak ada hasil untuk “<?= htmlspecialchars($search) ?>”.</p>
+            <?php endif; ?>
+
+                <?php foreach ($hotels as $h): ?>
+                    <li class="card-item swiper-slide">
+    <a href="<?= $h['reservasi'] ?>" class="card-link">
+        <img src="<?= htmlspecialchars($h['image']) ?>"
+             alt="<?= htmlspecialchars($h['name']) ?>"
+             class="card-image">
+
+        <!-- rating bintang -->
+        <p class="badge designer">
+            <?php for ($i = 0; $i < $h['stars']; $i++): ?>
+                <span class="fa fa-star checked"></span>
+            <?php endfor; ?>
+            <?php for ($i = $h['stars']; $i < 5; $i++): ?>
+                <span class="fa fa-star"></span>
+            <?php endfor; ?>
+        </p>
+
+        <h2 class="card-title"><?= htmlspecialchars($h['name']) ?></h2><br>
+        <p class="card-paragraph"><?= htmlspecialchars($h['description']) ?></p><br>
+        <button class="card-button material-symbols-rounded" type="button">arrow_forward</button>
+    </a>
+</li>
+
+                <?php endforeach; ?>
         </ul>
+
 
         <div class="swiper-pagination"></div>
         <div class="swiper-slide-button swiper-button-prev"></div>
@@ -265,18 +129,17 @@
 </div>
 
  <!--Rekomendasi-->
- <div class="main-content" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="300">
+ <div class="main-content" data-aos="fade-down" data-aos-duration="1000" data-aos-delay="300">
     <div class="image-container">
         <img alt="Delicious dish with shrimp and garlic" height="700" src="media/rekomMakananBandung.jpg" width="1200"/>
     <div class="text-content">
-     <h1>Best restaurants in Bandung 2024</h1>
+     <h1>Best restaurants in Bandung 2025</h1>
      <p>Plan a visit to the Best of the Best winners in our Travellers' Choice Awards.</p>
      <a class="button" href="restaurantBandung.php">Check out the list</a>
     </div>
    </div>
   </div>
 </div>
-
 
 <h2 class="title" data-aos="fade-down" data-aos-duration="1000" data-aos-delay="300">Recommendations in other<Span style="color: maroon;"> Cities</Span></h2>
         <!--content-->
@@ -320,8 +183,6 @@
         <div class="swiper-slide-button swiper-button-next"></div>
     </div>
 </div>
-
-
 
     <!--footer-->
     <footer class="footer">

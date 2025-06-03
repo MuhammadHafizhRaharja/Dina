@@ -6,15 +6,19 @@ include 'CRUD/reservasi restoran/db.php';
 $search = isset($_GET['search']) ? strtolower(trim($_GET['search'])) : '';
 $filteredRestaurants = [];
 
-if ($search) {
-    $stmt = $conn->prepare("SELECT * FROM restaurants WHERE LOWER(name) LIKE ? OR LOWER(description) LIKE ?");
-    $searchTerm = '%' . $search . '%';
-    $stmt->bind_param('ss', $searchTerm, $searchTerm);
-    $stmt->execute();
-    $result = $stmt->get_result();
-} else {
-    $result = $conn->query("SELECT * FROM restaurants");
+$sql = "SELECT * FROM restaurants WHERE city = 'Bali'";
+
+if (!empty($search)) {
+    $search = $conn->real_escape_string(strtolower($search));
+    $sql .= " AND (
+        LOWER(name) LIKE '%$search%' OR 
+        LOWER(description) LIKE '%$search%'
+    )";
 }
+
+$sql .= " ORDER BY review DESC";
+
+$result = $conn->query($sql);
 
 // Ambil hasil query ke array
 while ($row = $result->fetch_assoc()) {

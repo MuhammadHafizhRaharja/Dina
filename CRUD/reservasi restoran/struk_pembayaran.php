@@ -2,22 +2,24 @@
 include 'db.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $nama         = $_POST['nama'];
-    $telepon      = $_POST['telepon'];
-    $tanggal      = $_POST['tanggal'];
-    $jam          = $_POST['jam'];
-    $jumlah_orang = $_POST['jumlah_orang'];
-    $pesan        = $_POST['pesan'];
-    $id_meja      = $_POST['id_meja'];
-    $total_biaya  = $_POST['total_biaya'];
+    $id_restaurants = $_POST['id_restaurants'];
+    $nama           = $_POST['nama'];
+    $telepon        = $_POST['telepon'];
+    $tanggal        = $_POST['tanggal'];
+    $jam            = $_POST['jam'];
+    $jumlah_orang   = $_POST['jumlah_orang'];
+    $pesan          = $_POST['pesan'];
+    $id_meja        = $_POST['id_meja'];
+    $total_biaya    = $_POST['total_biaya'];
 
+    // Simpan ke database
     $stmt = $conn->prepare("
         INSERT INTO reservasi 
-        (nama, telepon, tanggal, jam, jumlah_orang, pesan, id_meja, total_biaya) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        (id_restaurants, nama, telepon, tanggal, jam, jumlah_orang, pesan, id_meja, total_biaya) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
 
-    $stmt->bind_param("sssssssi", $nama, $telepon, $tanggal, $jam, $jumlah_orang, $pesan, $id_meja, $total_biaya);
+    $stmt->bind_param("isssssssi", $id_restaurants, $nama, $telepon, $tanggal, $jam, $jumlah_orang, $pesan, $id_meja, $total_biaya);
 
     if (!$stmt->execute()) {
         die("Gagal menyimpan data: " . $stmt->error);

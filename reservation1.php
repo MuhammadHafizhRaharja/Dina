@@ -61,16 +61,16 @@ if ($checkin && $checkout) {
     <div class="container px-4">
         <div class="row align-items-center">
             <!-- Info Hotel -->
-            <div class="col-md-3 mb-4" class="text-center" data-aos="fade-right" data-aos-duration="1500" data-aos-delay="300">
+            <div class="col-md-3 mb-4 text-center" data-aos="fade-right" data-aos-duration="1500" data-aos-delay="300">
                 <h2 class="mb-3" style="text-align: center">Grand Mega Resort & Spa Bali</h2>
                 <img src="media/grand.webp" alt="Room Image" class="img-fluid rounded mb-3" width="300px">
                 <p><strong>Location:</strong><br>Jl. By Pass Ngurah Rai No.234, Kuta, Bali 80361</p>
-                <p><strong>Opening Hours:</strong><br>24 Hours, Monday to Sunday</p>
+                <p><strong>Opening Hours:</strong><br>12 Hours, Monday to Sunday</p>
             </div>
 
             <!-- Form -->
             <div class="col-md-7" data-aos="fade-left" data-aos-duration="1500" data-aos-delay="300">
-                <h3 class="mb-4 border-start border-danger ps-3" style="text-align: center">Reservation Hotel</h3>
+                <h3 class="mb-4 border-start border-danger ps-3 text-center">Reservation Hotel</h3>
                 <form method="POST" action="CRUD/reservasi_hotel/detail_pembayaran.php">
                     <input type="text" name="name" class="form-control mb-3 bg-dark text-white" placeholder="Your Name" required>
                     <input type="email" name="email" class="form-control mb-3 bg-dark text-white" placeholder="Your Email" required>
@@ -78,14 +78,14 @@ if ($checkin && $checkout) {
 
                     <div class="row">
                         <div class="col">
-                            <input type="date" name="checkin" class="form-control mb-3 bg-dark text-white" value="<?= $checkin ?>" required>
+                            <input type="date" name="checkin" class="form-control mb-3 bg-dark text-white"  value="<?= $checkin ?>" required>
                         </div>
                         <div class="col">
                             <input type="date" name="checkout" class="form-control mb-3 bg-dark text-white" value="<?= $checkout ?>" required>
                         </div>
                     </div>
 
-                    <select name="room_type" class="form-select mb-3 bg-dark text-white">
+                    <select name="room_type" class="form-select mb-3 bg-dark text-white" required>
                         <?php foreach ($roomTypes as $key => $room): ?>
                             <option value="<?= htmlspecialchars($key) ?>" <?= $selectedType == $key ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($room['name']) ?> - Rp<?= number_format($room['price'], 0, ',', '.') ?>/night
@@ -93,8 +93,8 @@ if ($checkin && $checkout) {
                         <?php endforeach; ?>
                     </select>
 
-
-                    
+                    <!-- Tambahan penting -->
+                    <input type="hidden" name="hotel_id" value="<?= $hotel_id ?>">
 
                     <textarea class="form-control mb-3 bg-dark text-white" name="special_request" placeholder="Special Request (optional)" rows="3"></textarea>
 
@@ -107,5 +107,74 @@ if ($checkin && $checkout) {
         </div>
     </div>
 </section>
+
+<!--Review-->
+    <div class="reviews-container" data-aos="fade-down" data-aos-duration="1200" data-aos-delay="300">
+        <div class="review-card" >
+            <div class="review-header">
+                <div class="stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+
+            <div class="review-content">
+                Hotel ini sangat memuaskan. Kamar bersih, pelayanan ramah, fasilitas lengkap, dan sarapan lezat. Lokasi strategis memudahkan akses ke berbagai tempat wisata.
+            </div>
+
+            <div class="review-footer">
+                <img alt="Profile picture of @R450GCarnauld" height="40" src="about us/images/Foto apis.jpg" width="40"/>
+                    <div class="username">apis@gmail.com</div>
+                    <div class="date">3 bulan lalu</div>
+            </div>
+        </div>
+
+        <div class="review-card">
+            <div class="review-header">
+                <div class="stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+             </div>
+
+            <div class="review-content">
+                Lokasi hotel sangat strategis, dekat tempat wisata. Pelayanan staf sangat profesional, kamar selalu bersih dan nyaman, serta suasana hotel tenang. Ingin kembali lagi
+            </div>
+
+            <div class="review-footer">
+                <img alt="Profile picture of @846rapha_lm" height="40" src="about us/images/darren2.jpg" width="40"/>
+                    <div class="username">daren@gmail.com</div>
+                    <div class="date">3 bulan lalu</div>
+            </div>
+        </div>
+
+        <div class="review-card">
+            <div class="review-header">
+                <div class="stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+
+            <div class="review-content">
+                Pengalaman menginap yang menyenangkan. Kamar nyaman dengan pemandangan indah. Wi-Fi stabil, kolam renang bersih. Sangat direkomendasikan!
+            </div>
+
+            <div class="review-footer">
+                <img alt="Profile picture of @R450GCarnauld" height="40" src="about us/images/dwiki.jpg" width="40"/>
+                    <div class="username">afdikk@gmail.com</div>
+                    <div class="date">3 bulan lalu</div>
+            </div>
+        </div>
+    </div>
 
 <?php include 'views/footer3.php'; ?>

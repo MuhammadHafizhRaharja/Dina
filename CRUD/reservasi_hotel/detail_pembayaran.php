@@ -2,29 +2,29 @@
 include 'db.php';
 
 // Ambil data dari form
-$name    = $_POST['name'] ?? '';
-$email   = $_POST['email'] ?? '';
-$phone   = $_POST['phone'] ?? '';
-$checkin = $_POST['checkin'] ?? '';
-$checkout = $_POST['checkout'] ?? '';
-$room_type = $_POST['room_type'] ?? '';
-$special  = $_POST['special_request'] ?? '';
+$name       = $_POST['name'] ?? '';
+$email      = $_POST['email'] ?? '';
+$phone      = $_POST['phone'] ?? '';
+$checkin    = $_POST['checkin'] ?? '';
+$checkout   = $_POST['checkout'] ?? '';
+$room_type  = $_POST['room_type'] ?? '';
+$special    = $_POST['special_request'] ?? '';
+$hotel_id   = $_POST['hotel_id'] ?? '';
 
-// Ambil harga kamar
-$sql = "SELECT name, price FROM room_types WHERE type_key = ?";
+// Ambil harga kamar berdasarkan room_type dan hotel_id
+$sql = "SELECT name, price FROM room_types WHERE type_key = ? AND hotel_id = ?";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $room_type);
+$stmt->bind_param("si", $room_type, $hotel_id);
 $stmt->execute();
 $stmt->bind_result($room_name, $price);
 $stmt->fetch();
 $stmt->close();
 
-// Hitung malam & total harga
+// Hitung jumlah malam dan total harga
 $start = new DateTime($checkin);
 $end   = new DateTime($checkout);
 $nights = max(1, $start->diff($end)->days);
 $total = $price * $nights;
-
 ?>
 
 <!DOCTYPE html>
@@ -56,6 +56,7 @@ $total = $price * $nights;
       <input type="hidden" name="checkout" value="<?= htmlspecialchars($checkout) ?>">
       <input type="hidden" name="room_type" value="<?= htmlspecialchars($room_type) ?>">
       <input type="hidden" name="special_request" value="<?= htmlspecialchars($special) ?>">
+      <input type="hidden" name="hotel_id" value="<?= htmlspecialchars($hotel_id) ?>">
 
       <div class="payment-section">
         <label class="payment-method">

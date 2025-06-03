@@ -3,14 +3,18 @@
     include 'db.php';
     
     // Tampilkan halaman konfirmasi
-    $nama = $_GET['nama'];
-    $telepon = $_GET['telepon'];
-    $tanggal = $_GET['tanggal'];
-    $jam = $_GET['jam'];
-    $jumlah_orang = $_GET['jumlah_orang'];
-    $pesan = $_GET['pesan'];
-    $id_meja = $_GET['id_meja'];
-    $total_biaya = $_GET['total_biaya'];
+    $nama = $_GET['nama'] ?? '';
+    $telepon = $_GET['telepon'] ?? '';
+    $tanggal = $_GET['tanggal'] ?? '';
+    $jam = $_GET['jam'] ?? '';
+    $jumlah_orang = $_GET['jumlah_orang'] ?? '';
+    $pesan = $_GET['pesan'] ?? '';
+    $id_meja = $_GET['id_meja'] ?? '';
+    $total_biaya = $_GET['total_biaya'] ?? '';
+    $id_restaurants = $_GET['id_restaurants'] ?? '';
+
+    var_dump($id_restaurants);
+
 
     ?>
 <!DOCTYPE html>
@@ -35,6 +39,7 @@
     </div>
 
     <form class="payment-section" method="POST" action="struk_pembayaran.php">
+      <input type="hidden" name="id_restaurants" value="<?= htmlspecialchars($id_restaurants ?? '') ?>">
       <input type="hidden" name="nama" value="<?= htmlspecialchars($nama) ?>">
       <input type="hidden" name="telepon" value="<?= htmlspecialchars($telepon) ?>">
       <input type="hidden" name="tanggal" value="<?= htmlspecialchars($tanggal) ?>">

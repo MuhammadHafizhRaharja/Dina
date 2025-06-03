@@ -5,14 +5,16 @@ include 'CRUD/reservasi restoran/db.php';
 $keyword = isset($_GET['search']) ? strtolower($_GET['search']) : '';
 
 // Query dengan filter
-$sql = "SELECT * FROM shopping_places";
+$sql = "SELECT * FROM shopping_places WHERE city = 'Bali'";
 if (!empty($keyword)) {
     $keyword = $conn->real_escape_string($keyword);
-    $sql .= " WHERE 
+    $sql .= " AND (
         LOWER(name) LIKE '%$keyword%' OR 
         LOWER(location) LIKE '%$keyword%' OR 
-        LOWER(description) LIKE '%$keyword%'";
+        LOWER(description) LIKE '%$keyword%'
+    )";
 }
+$sql .= " ORDER BY visitors DESC";
 
 $result = $conn->query($sql);
 $filtered = [];
@@ -110,10 +112,6 @@ if ($result && $result->num_rows > 0) {
                         <div class="description<?php echo $index % 2 == 0 ? '-right' : ''; ?>">
                             <i class="fas fa-info-circle"></i> <?php echo $mall['description']; ?>
                         </div>
-                        <div class="facts<?php echo $index % 2 == 0 ? '-right' : ''; ?>">
-                            <span><i class="material-symbols-outlined" style="font-size: 15px;">local_mall</i> Contemporary, Luxurious, Spacious</span>
-                            <span>$$$$</span>
-                        </div>
                     </div>
                 <?php if ($index % 2 == 0): ?>
                     <img src="<?php echo $mall['image']; ?>" alt="<?php echo $mall['name']; ?>" height="400" width="200"/>
@@ -123,8 +121,6 @@ if ($result && $result->num_rows > 0) {
     </div>
 
         
-
-
         <!--ISi-->
         <h2 class="title-city" data-aos="fade-down" data-aos-duration="1000" data-aos-delay="300">Recommendations in other<Span style="color: maroon;"> Cities</Span></h2>
                 <!--content-->

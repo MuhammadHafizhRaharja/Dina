@@ -12,11 +12,18 @@ body {
 }
 
 .alert-success {
-    color: #2e7d32;
+    background-color: #d4edda;
+    color: #155724;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
 }
-
 .alert-error {
-    color: #c62828;
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
 }
 
 .container-resto {

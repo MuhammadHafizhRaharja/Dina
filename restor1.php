@@ -1,6 +1,8 @@
 <?php
 include 'CRUD/reservasi restoran/db.php';
 
+$id_restaurants = 1;
+
 $biaya_per_orang = 100000;
 $pesan_error = "";
 $pesan_sukses = "";
@@ -14,6 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $jumlah_orang = intval($_POST['jumlah_orang'] ?? 0);
     $pesan = $_POST['pesan'] ?? '';
     $id_meja = intval($_POST['id_meja'] ?? 0);
+    $id_restaurants = $_POST['id_restaurants'] ?? '';
 
     $total_biaya = $jumlah_orang * $biaya_per_orang;
 
@@ -21,8 +24,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($jam)) {
         $pesan_error = "Jam reservasi belum dipilih.";
     } else {
-        $cek = $conn->prepare("SELECT * FROM reservasi WHERE tanggal=? AND jam=? AND id_meja=?");
-        $cek->bind_param("ssi", $tanggal, $jam, $id_meja);
+        $cek = $conn->prepare("SELECT * FROM reservasi WHERE tanggal=? AND jam=? AND id_meja=? AND id_restaurants=?");
+        $cek->bind_param("ssis", $tanggal, $jam, $id_meja, $id_restaurants);
         $cek->execute();
         $result = $cek->get_result();
 
@@ -38,7 +41,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 "&jumlah_orang=$jumlah_orang" .
                 "&pesan=" . urlencode($pesan) .
                 "&id_meja=$id_meja" .
-                "&total_biaya=$total_biaya");
+                "&total_biaya=$total_biaya" .
+                "&id_restaurants=$id_restaurants");
             exit();
         }
     }
@@ -63,22 +67,6 @@ while ($row = $meja_query->fetch_assoc()) {
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet"/>
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     <link rel="stylesheet" href="reservasiresto.css">
-    <style>
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
-        }
-        .alert-error {
-            background-color: #f8d7da;
-            color: #721c24;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
-        }
-    </style>
 </head>
 <body>
 <?php
@@ -110,6 +98,8 @@ include 'views/header2.php';
             <?php elseif ($pesan_error): ?>
                 <div class="alert-error"><?= $pesan_error ?></div>
             <?php endif; ?>
+
+            <input type="hidden" name="id_restaurants" value="<?php echo $id_restaurants; ?>">
 
             <input name="nama" placeholder="Full Name" type="text" required />
             <input name="telepon" placeholder="Phone Number" type="tel" required />

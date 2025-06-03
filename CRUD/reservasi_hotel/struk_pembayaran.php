@@ -2,36 +2,37 @@
 include 'db.php';
 
 // Ambil data dari POST
-$name     = $_POST['name'] ?? '';
-$email    = $_POST['email'] ?? '';
-$phone    = $_POST['phone'] ?? '';
-$checkin  = $_POST['checkin'] ?? '';
-$checkout = $_POST['checkout'] ?? '';
-$room_key = $_POST['room_type'] ?? '';
-$special  = $_POST['special_request'] ?? '';
-$payment  = $_POST['payment_method'] ?? '';
+$name      = $_POST['name'] ?? '';
+$email     = $_POST['email'] ?? '';
+$phone     = $_POST['phone'] ?? '';
+$checkin   = $_POST['checkin'] ?? '';
+$checkout  = $_POST['checkout'] ?? '';
+$room_key  = $_POST['room_type'] ?? '';
+$special   = $_POST['special_request'] ?? '';
+$payment   = $_POST['payment_method'] ?? '';
+$hotel_id  = $_POST['hotel_id'] ?? null;
 
-// Ambil data tipe kamar dari database
-$sql = "SELECT name, price FROM room_types WHERE type_key = ?";
+// Ambil data tipe kamar dari database berdasarkan hotel_id
+$sql = "SELECT name, price FROM room_types WHERE hotel_id = ? AND type_key = ?";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $room_key);
+$stmt->bind_param("is", $hotel_id, $room_key);
 $stmt->execute();
 $stmt->bind_result($room_name, $price);
 $stmt->fetch();
 $stmt->close();
 
-// Hitung malam & total harga
-$start = new DateTime($checkin);
-$end   = new DateTime($checkout);
+// Hitung jumlah malam & total harga
+$start  = new DateTime($checkin);
+$end    = new DateTime($checkout);
 $nights = max(1, $start->diff($end)->days);
-$total = $price * $nights;
+$total  = $price * $nights;
 
 // Simpan ke database
 $stmt = $conn->prepare("INSERT INTO hotel_reservations (
-    name, email, phone, checkin, checkout, room_type, special_request, nights, total_price
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-$stmt->bind_param("sssssssii",
-    $name, $email, $phone, $checkin, $checkout,
+    hotel_id, name, email, phone, checkin, checkout, room_type, special_request, nights, total_price
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+$stmt->bind_param("issssssssi",
+    $hotel_id, $name, $email, $phone, $checkin, $checkout,
     $room_key, $special, $nights, $total
 );
 $stmt->execute();
@@ -49,12 +50,13 @@ $conn->close();
 <body>
   <div class="receipt">
     <h2>Struk Pembayaran Hotel</h2>
-    <div class="status">Status: LUNAS</div>
+    <div class="status">Pembayaran Berhasil!</div>
 
     <div class="receipt-info">
       <p><strong>Nama:</strong> <?= htmlspecialchars($name) ?></p>
       <p><strong>Email:</strong> <?= htmlspecialchars($email) ?></p>
       <p><strong>Telepon:</strong> <?= htmlspecialchars($phone) ?></p>
+      <p><strong>ID Hotel:</strong> <?= htmlspecialchars($hotel_id) ?></p>
       <p><strong>Tipe Kamar:</strong> <?= htmlspecialchars($room_name) ?></p>
       <p><strong>Harga / Malam:</strong> Rp<?= number_format($price, 0, ',', '.') ?></p>
       <p><strong>Check-in:</strong> <?= htmlspecialchars($checkin) ?></p>
