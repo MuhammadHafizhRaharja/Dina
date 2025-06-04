@@ -1,9 +1,16 @@
 <?php
+session_start();
+
+if (!isset($_SESSION['id_user'])) {
+    header("Location: Signin.php");
+    exit();
+}
+
 // if ($_SERVER["REQUEST_METHOD"] == "POST") {
     include 'db.php';
     
     // Tampilkan halaman konfirmasi
-    $nama = $_GET['nama'] ?? '';
+    $id_user = $_SESSION['id_user'];
     $telepon = $_GET['telepon'] ?? '';
     $tanggal = $_GET['tanggal'] ?? '';
     $jam = $_GET['jam'] ?? '';
@@ -15,6 +22,7 @@
 
     var_dump($id_restaurants);
 
+$username = $_SESSION['username']; // Pastikan username disimpan di session saat login
 
     ?>
 <!DOCTYPE html>
@@ -29,7 +37,7 @@
 <div class="card">
     <h2>Detail Reservasi Restoran</h2>
     <div class="info">
-        <p><span class="highlight">Nama:</span> <?= htmlspecialchars($nama) ?></p>
+        <p><span class="highlight">Nama:</span> <?= htmlspecialchars($username) ?></p>
         <p><span class="highlight">Tanggal Reservasi:</span> <?= htmlspecialchars($tanggal) ?></p>
         <p><span class="highlight">Jam:</span> <?= htmlspecialchars($jam) ?></p>
         <p><span class="highlight">Jumlah Orang:</span> <?= htmlspecialchars($jumlah_orang) ?></p>
@@ -40,7 +48,7 @@
 
     <form class="payment-section" method="POST" action="struk_pembayaran.php">
       <input type="hidden" name="id_restaurants" value="<?= htmlspecialchars($id_restaurants ?? '') ?>">
-      <input type="hidden" name="nama" value="<?= htmlspecialchars($nama) ?>">
+      <input type="hidden" name="nama" value="<?= htmlspecialchars($username) ?>">
       <input type="hidden" name="telepon" value="<?= htmlspecialchars($telepon) ?>">
       <input type="hidden" name="tanggal" value="<?= htmlspecialchars($tanggal) ?>">
       <input type="hidden" name="jam" value="<?= htmlspecialchars($jam) ?>">

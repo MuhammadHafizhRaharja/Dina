@@ -1,4 +1,11 @@
 <?php
+session_start();
+
+if (!isset($_SESSION['id_user'])) {
+    header("Location: Signin.php");
+    exit();
+}
+
 include 'CRUD/reservasi restoran/db.php';
 
 $id_restaurants = 2;
@@ -7,15 +14,16 @@ $biaya_per_orang = 100000;
 $pesan_error = "";
 $pesan_sukses = "";
 
-$stmt = $conn->prepare("SELECT name, image FROM restaurants WHERE id_restaurants = ?");
+$stmt = $conn->prepare("SELECT name, image, location FROM restaurants WHERE id_restaurants = ?");
 $stmt->bind_param("i", $id_restaurants);
 $stmt->execute();
-$stmt->bind_result($name, $image);
+$stmt->bind_result($name, $image, $location);
 $stmt->fetch();
 $stmt->close();
 
 // Cek jika form disubmit
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $id_user = $_SESSION['id_user'];
     $nama = $_POST['name'] ?? '';
     $telepon = $_POST['telepon'] ?? '';
     $tanggal = $_POST['tanggal'] ?? '';
@@ -23,7 +31,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $jumlah_orang = intval($_POST['jumlah_orang'] ?? 0);
     $pesan = $_POST['pesan'] ?? '';
     $id_meja = intval($_POST['id_meja'] ?? 0);
-    $id_restaurants = $_GET['id_restaurants'] ?? 1;
+    $id_restaurants = $_GET['id_restaurants'] ?? 2;
+    $location = $_POST['location'] ?? '';
+
 
     $total_biaya = $jumlah_orang * $biaya_per_orang;
 
@@ -41,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             // Tidak langsung simpan, redirect ke halaman konfirmasi pembayaran
             header("Location: CRUD/reservasi restoran/detail_pembayaran.php?" .
-                "nama=" . urlencode($nama) .
+                "nama=" . urlencode($username) .
                 "&telepon=" . urlencode($telepon) .
                 "&tanggal=$tanggal" .
                 "&jam=$jam" .
@@ -61,6 +71,9 @@ $meja_list = [];
 while ($row = $meja_query->fetch_assoc()) {
     $meja_list[] = $row;
 }
+
+$username = $_SESSION['username']; // Pastikan username disimpan di session saat login
+
 ?>
 
 <html lang="en">
@@ -86,7 +99,7 @@ include 'views/header2.php';
         <img alt="Restaurant exterior with tables and chairs" height="200" src="<?= htmlspecialchars($image) ?>" width="300"/>
         <div>
             <p style="padding-top: 20px; color: white;"><strong>Location</strong></p>
-            <p style="font-size: 14px;">Jl. Danau Tamblingan No.140, Sanur, Denpasar Selatan, Kota Denpasar, Bali 80228</p>
+            <p style="font-size: 14px;"> <?= htmlspecialchars($location) ?></p>
             <p style="padding-top: 10px; color: white;"><strong> Opening Hours</strong></p>
             <p style="font-size: 14px;">Monday to Sunday</p>
             <p style="font-size: 14px;">08.00 - 22.00</p>
@@ -107,8 +120,7 @@ include 'views/header2.php';
             <?php endif; ?>
 
             <input type="hidden" name="id_restaurants" value="<?php echo $id_restaurants; ?>">
-
-            <input name="nama" placeholder="Full Name" type="text" required />
+            <input name="nama" placeholder="Full Name" type="text" required value="<?= htmlspecialchars($username) ?>" readonly />
             <input name="telepon" placeholder="Phone Number" type="tel" required />
 
             <div style="display: flex; gap: 10px;">

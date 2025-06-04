@@ -1,9 +1,18 @@
 <?php
+session_start();
+
+if (!isset($_SESSION['id_user'])) {
+    header("Location: Signin.php");
+    exit();
+}
+
 include 'db.php';
+$username = $_SESSION['username']; // Pastikan username disimpan di session saat login
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_restaurants = $_POST['id_restaurants'];
-    $nama           = $_POST['nama'];
+    $id_user = $_SESSION['id_user'];
     $telepon        = $_POST['telepon'];
     $tanggal        = $_POST['tanggal'];
     $jam            = $_POST['jam'];
@@ -15,11 +24,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Simpan ke database
     $stmt = $conn->prepare("
         INSERT INTO reservasi 
-        (id_restaurants, nama, telepon, tanggal, jam, jumlah_orang, pesan, id_meja, total_biaya) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (id_restaurants, id_user, username, telepon, tanggal, jam, jumlah_orang, pesan, id_meja, total_biaya) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)
     ");
 
-    $stmt->bind_param("isssssssi", $id_restaurants, $nama, $telepon, $tanggal, $jam, $jumlah_orang, $pesan, $id_meja, $total_biaya);
+    $stmt->bind_param("iisssssssi", $id_restaurants, $id_user, $username, $telepon, $tanggal, $jam, $jumlah_orang, $pesan, $id_meja, $total_biaya);
 
     if (!$stmt->execute()) {
         die("Gagal menyimpan data: " . $stmt->error);
@@ -30,6 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     header("Location: detail_pembayaran.php");
     exit;
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -46,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <h2>Struk Pembayaran Restoran</h2>
     <div class="status">Status: LUNAS</div>
 
-    <p><span class="label">Nama:</span> <?= htmlspecialchars($nama) ?></p>
+    <p><span class="label">Nama:</span> <?= htmlspecialchars($username) ?></p>
     <p><span class="label">Telepon:</span> <?= htmlspecialchars($telepon) ?></p>
     <p><span class="label">Tanggal Reservasi:</span> <?= htmlspecialchars($tanggal) ?></p>
     <p><span class="label">Jam:</span> <?= htmlspecialchars($jam) ?></p>
