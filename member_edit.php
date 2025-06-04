@@ -103,9 +103,6 @@ if (isset($_GET['delete_user'])) {
                     </tbody>
                 </table>
             </div>
-
-            <!-- Button to go to Create User Form -->
-            <a href="create_user.php" class="btn btn-primary">Create New User</a>
         </div>
 
         <!-- Back to Dashboard Button -->

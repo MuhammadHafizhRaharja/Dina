@@ -7,34 +7,43 @@ if (!isset($_SESSION['id_user'])) {
     exit();
 }
 
-$id_paket = $_GET['id_paket'];
+// CEK id_paket ADA DI URL
+if (!isset($_GET['id_paket']) || !is_numeric($_GET['id_paket'])) {
+    echo "<h2>Paket tidak ditemukan.</h2>";
+    exit();
+}
+
+$id_paket = (int)$_GET['id_paket'];
 $id_user = $_SESSION['id_user'];
 
 // Ambil detail paket
 $paket = $conn->query("SELECT * FROM paket_perjalanan WHERE id_paket=$id_paket")->fetch_assoc();
-$detail = $conn->query("SELECT * FROM detail_paket WHERE id_paket=$id_paket")->fetch_assoc();
+$detailResult = $conn->query("SELECT * FROM detail_paket WHERE id_paket=$id_paket");
 
-// Ambil data hotel, restoran, wisata
-$hotel = null;
-$resto = null;
-$wisata = null;
-if ($detail) {
+// Ambil data hotel, restoran, wisata (bisa lebih dari satu)
+$hotels = [];
+$restos = [];
+$wisatas = [];
+while ($detail = $detailResult->fetch_assoc()) {
     if ($detail['id_hotel']) {
         $hotel = $conn->query("SELECT * FROM hotels WHERE id={$detail['id_hotel']}")->fetch_assoc();
+        if ($hotel) $hotels[] = $hotel;
     }
-    if ($detail['id_restaurant']) {
-        $resto = $conn->query("SELECT * FROM restaurants WHERE id_restaurants={$detail['id_restaurant']}")->fetch_assoc();
+    if ($detail['id_restaurants']) {
+        $resto = $conn->query("SELECT * FROM restaurants WHERE id_restaurants={$detail['id_restaurants']}")->fetch_assoc();
+        if ($resto) $restos[] = $resto;
     }
     if ($detail['id_wisata']) {
         $wisata = $conn->query("SELECT * FROM wisata WHERE id_wisata={$detail['id_wisata']}")->fetch_assoc();
+        if ($wisata) $wisatas[] = $wisata;
     }
 }
 
 // Hitung harga asli (tanpa diskon)
 $harga_asli = 0;
-if ($hotel) $harga_asli +=  isset($hotel['reservasi']) ? (int)$hotel['reservasi'] : 0;
-if ($resto) $harga_asli += 50000; // contoh harga makan, sesuaikan jika ada field harga
-if ($wisata) $harga_asli += isset($wisata['harga']) ? (int)$wisata['harga'] : 0;
+foreach ($hotels as $hotel) $harga_asli += isset($hotel['reservasi']) ? (int)$hotel['reservasi'] : 0;
+foreach ($restos as $resto) $harga_asli += 50000; // contoh harga makan, sesuaikan jika ada field harga
+foreach ($wisatas as $wisata) $harga_asli += isset($wisata['harga']) ? (int)$wisata['harga'] : 0;
 
 // Harga diskon dari paket
 $harga_diskon = $paket['harga'];
@@ -42,35 +51,54 @@ $alasan_diskon = "Harga paket lebih murah karena sudah termasuk hotel, restoran,
 
 // Proses pemesanan
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $tanggal = $_POST['tanggal'];
-    $stmt = $conn->prepare("INSERT INTO pemesanan_paket (id_user, id_paket, tanggal) VALUES (?, ?, ?)");
-    $stmt->bind_param("iis", $id_user, $id_paket, $tanggal);
-    $stmt->execute();
-    $stmt->close();
+    $tanggal = $_POST['tanggal'] ?? '';
+    if (!$tanggal) {
+        echo "<script>alert('Tanggal perjalanan harus diisi!');</script>";
+    } else {
+        // 1. Insert ke pemesanan_paket
+        $stmt = $conn->prepare("INSERT INTO pemesanan_paket (id_user, id_paket, tanggal) VALUES (?, ?, ?)");
+        $stmt->bind_param("iis", $id_user, $id_paket, $tanggal);
+        $stmt->execute();
+        $stmt->close();
 
-    if ($detail['id_hotel']) {
-        $stmt = $conn->prepare("INSERT INTO hotel_reservations (id_user, id_hotel, tanggal) VALUES (?, ?, ?)");
-        $stmt->bind_param("iis", $id_user, $detail['id_hotel'], $tanggal);
-        $stmt->execute();
-        $stmt->close();
-    }
-    if ($detail['id_restaurant']) {
-        $stmt = $conn->prepare("INSERT INTO reservasi (id_user, id_restaurant, tanggal) VALUES (?, ?, ?)");
-        $stmt->bind_param("iis", $id_user, $detail['id_restaurant'], $tanggal);
-        $stmt->execute();
-        $stmt->close();
-    }
-    if ($detail['id_wisata']) {
-        $jumlah_tiket = 1;
-        $total_harga = $wisata ? $wisata['harga'] * $jumlah_tiket : 0;
-        $stmt = $conn->prepare("INSERT INTO pemesanan_tiket (id_user, id_wisata, tanggal, jumlah_tiket, total_harga) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("iisid", $id_user, $detail['id_wisata'], $tanggal, $jumlah_tiket, $total_harga);
-        $stmt->execute();
-        $stmt->close();
-    }
+        // 2. Insert ke hotel_reservations (gunakan checkin dan checkout sama jika hanya 1 malam)
+        foreach ($hotels as $hotel) {
+            $stmt = $conn->prepare("INSERT INTO hotel_reservations (name, email, phone, hotel_id, checkin, checkout, room_type, nights, total_price, id_user) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $name = $_SESSION['username'];
+            $email = $_SESSION['email'] ?? '';
+            $phone = ''; // Isi jika ada di session/user
+            $hotel_id = $hotel['id'];
+            $checkin = $tanggal;
+            $checkout = $tanggal;
+            $room_type = '';
+            $nights = 1;
+            $total_price = $hotel['reservasi'] ?? 0;
+            $stmt->bind_param("ssssssssii", $name, $email, $phone, $hotel_id, $checkin, $checkout, $room_type, $nights, $total_price, $id_user);
+            $stmt->execute();
+            $stmt->close();
+        }
 
-    header("Location: konfirmasi_pemesanan.php");
-    exit();
+        // 3. Insert ke reservasi restoran
+        foreach ($restos as $resto) {
+            $stmt = $conn->prepare("INSERT INTO reservasi (id_user, id_restaurants, tanggal) VALUES (?, ?, ?)");
+            $stmt->bind_param("iis", $id_user, $resto['id_restaurants'], $tanggal);
+            $stmt->execute();
+            $stmt->close();
+        }
+
+        // 4. Insert ke pemesanan_tiket wisata
+        foreach ($wisatas as $wisata) {
+            $jumlah_tiket = 1;
+            $total_harga = $wisata['harga'] * $jumlah_tiket;
+            $stmt = $conn->prepare("INSERT INTO pemesanan_tiket (id_user, id_wisata, tanggal, jumlah_tiket, total_harga) VALUES (?, ?, ?, ?, ?)");
+            $stmt->bind_param("iisid", $id_user, $wisata['id_wisata'], $tanggal, $jumlah_tiket, $total_harga);
+            $stmt->execute();
+            $stmt->close();
+        }
+
+        header("Location: konfirmasi_pemesanan.php");
+        exit();
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -140,15 +168,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
             <div class="paket__desc"><?= htmlspecialchars($paket['deskripsi']) ?></div>
             <ul class="paket-detail-list">
-                <?php if($hotel): ?>
+                <?php foreach($hotels as $hotel): ?>
                 <li><b>Hotel:</b> <?= htmlspecialchars($hotel['name']) ?> <?= isset($hotel['stars']) ? "({$hotel['stars']}★)" : "" ?></li>
-                <?php endif; ?>
-                <?php if($resto): ?>
+                <?php endforeach; ?>
+                <?php foreach($restos as $resto): ?>
                 <li><b>Restoran:</b> <?= htmlspecialchars($resto['name']) ?></li>
-                <?php endif; ?>
-                <?php if($wisata): ?>
+                <?php endforeach; ?>
+                <?php foreach($wisatas as $wisata): ?>
                 <li><b>Wisata:</b> <?= htmlspecialchars($wisata['nama_wisata']) ?></li>
-                <?php endif; ?>
+                <?php endforeach; ?>
             </ul>
             <div class="paket__harga">
                 <span class="harga-asli">Rp <?= number_format($harga_asli,0,',','.') ?></span>

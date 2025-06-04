@@ -3,43 +3,26 @@
 include 'db.php';
 
 // Fetch all reservations from the database
-$query = "SELECT * FROM reservation ORDER BY date DESC";
+$query = "SELECT * FROM reservasi ORDER BY tanggal DESC";
 $result = $conn->query($query);
 
 // Handle form submission to create a reservation
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create'])) {
     // Collect form data
-    $name = $_POST['name'];
-    $phone = $_POST['phone'];
-    $people = $_POST['people'];
-    $date = $_POST['date'];
-    $table = $_POST['table_number'];
-    $time = $_POST['time'];
-    $message = $_POST['message'];
+    $nama = $_POST['nama'];
+    $telepon = $_POST['telepon'];
+    $jumlah_orang = $_POST['jumlah_orang'];
+    $tanggal = $_POST['tanggal'];
+    $id_meja = $_POST['id_meja'];
+    $jam = $_POST['jam'];
+    $pesan = $_POST['pesan'];
 
     // Insert the reservation into the database
-    $stmt = $conn->prepare("INSERT INTO reservation (name, phone, people, date, table_number, time, message) VALUES (?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("ssissss", $name, $phone, $people, $date, $table, $time, $message);
+    $stmt = $conn->prepare("INSERT INTO reservasi (nama, telepon, jumlah_orang, tanggal, id_meja, jam, pesan, total_biaya) VALUES (?, ?, ?, ?, ?, ?, ?, 0)");
+    $stmt->bind_param("ssissss", $nama, $telepon, $jumlah_orang, $tanggal, $id_meja, $jam, $pesan);
 
     if ($stmt->execute()) {
         echo "<p>Reservation created successfully!</p>";
-    } else {
-        echo "<p>Error: " . $stmt->error . "</p>";
-    }
-
-    $stmt->close();
-}
-
-// Handle status updates (approve/reject)
-if (isset($_POST['update_status'])) {
-    $reservation_id = $_POST['reservation_id'];
-    $status = $_POST['status'];
-
-    $stmt = $conn->prepare("UPDATE reservation SET status = ? WHERE id = ?");
-    $stmt->bind_param("si", $status, $reservation_id);
-
-    if ($stmt->execute()) {
-        echo "<p>Reservation status updated successfully!</p>";
     } else {
         echo "<p>Error: " . $stmt->error . "</p>";
     }
@@ -51,7 +34,7 @@ if (isset($_POST['update_status'])) {
 if (isset($_POST['delete_reservation'])) {
     $reservation_id = $_POST['reservation_id'];
 
-    $stmt = $conn->prepare("DELETE FROM reservation WHERE id = ?");
+    $stmt = $conn->prepare("DELETE FROM reservasi WHERE id_reservasi = ?");
     $stmt->bind_param("i", $reservation_id);
 
     if ($stmt->execute()) {
@@ -79,65 +62,37 @@ $conn->close();
   <div class="admin-container">
     <h1>Pengelolaan Reservasi</h1>
 
-    <!-- Back to Dashboard Button -->
-    <a href="dashboard.php" class="btn-back-to-dashboard">Back to Dashboard</a>
-
-    <!-- Reservation Creation Form -->
-    <h2>Tambah Reservasi</h2>
-    <form method="POST">
-      <input name="name" placeholder="Your Name" type="text" required>
-      <input name="phone" placeholder="Phone Number" type="tel" required>
-      <input name="people" placeholder="Number of People" type="number" required>
-      <input name="date" type="date" required>
-      <input name="table_number" placeholder="Table Number" type="number" required>
-      <input name="time" type="time" required>
-      <textarea name="message" placeholder="Message"></textarea>
-      <button type="submit" name="create">Add Reservation</button>
-    </form>
-
     <h2>Daftar Reservasi</h2>
     <div class="reservations-list">
       <?php while ($row = $result->fetch_assoc()): ?>
         <div class="reservation-card">
           <div class="card-header">
-            <h2>Reservasi oleh: <?= $row['name'] ?></h2>
-            <span class="status">Status: <?= $row['status'] ?></span>
+            <h2>Reservasi oleh: <?= htmlspecialchars($row['nama']) ?></h2>
           </div>
           
           <div class="card-body">
-            <p><strong>Nomor Telepon:</strong> <?= $row['phone'] ?></p>
-            <p><strong>Jumlah Orang:</strong> <?= $row['people'] ?> orang</p>
-            <p><strong>Tanggal Reservasi:</strong> <?= $row['date'] ?></p>
-            <p><strong>Jam Reservasi:</strong> <?= $row['time'] ?></p>
-            <p><strong>Nomor Meja:</strong> Meja <?= $row['table_number'] ?></p>
-            <p><strong>Pesan:</strong> <?= $row['message'] ?></p>
+            <p><strong>Nomor Telepon:</strong> <?= htmlspecialchars($row['telepon']) ?></p>
+            <p><strong>Jumlah Orang:</strong> <?= htmlspecialchars($row['jumlah_orang']) ?> orang</p>
+            <p><strong>Tanggal Reservasi:</strong> <?= htmlspecialchars($row['tanggal']) ?></p>
+            <p><strong>Jam Reservasi:</strong> <?= htmlspecialchars($row['jam']) ?></p>
+            <p><strong>Nomor Meja:</strong> Meja <?= htmlspecialchars($row['id_meja']) ?></p>
+            <p><strong>Pesan:</strong> <?= htmlspecialchars($row['pesan']) ?></p>
           </div>
 
           <div class="card-footer">
             <!-- Edit Reservation Link -->
-            <a href="update_reservation.php?id=<?= $row['id'] ?>" class="btn-edit">Edit</a>
-
-            <!-- Update Status (Approve/Reject) -->
-            <form method="POST" style="display:inline-block;">
-              <input type="hidden" name="reservation_id" value="<?= $row['id'] ?>">
-              <select name="status" required>
-                <option value="approved" <?= ($row['status'] == 'approved') ? 'selected' : '' ?>>Approve</option>
-                <option value="rejected" <?= ($row['status'] == 'rejected') ? 'selected' : '' ?>>Reject</option>
-                <option value="pending" <?= ($row['status'] == 'pending') ? 'selected' : '' ?>>Pending</option>
-              </select>
-              <button type="submit" name="update_status">Update Status</button>
-            </form>
+            <a href="update_reservation.php?id=<?= $row['id_reservasi'] ?>" class="btn-edit">Edit</a>
 
             <!-- Delete Reservation -->
             <form method="POST" style="display:inline-block;">
-              <input type="hidden" name="reservation_id" value="<?= $row['id'] ?>">
+              <input type="hidden" name="reservation_id" value="<?= $row['id_reservasi'] ?>">
               <button type="submit" name="delete_reservation" onclick="return confirm('Are you sure you want to delete this reservation?')">Delete</button>
             </form>
           </div>
         </div>
       <?php endwhile; ?>
     </div>
+    <a href="dashboard.php" class="btn-back-to-dashboard">Back to Dashboard</a>
   </div>
-
 </body>
 </html>

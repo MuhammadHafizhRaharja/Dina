@@ -90,6 +90,11 @@ echo "Welcome to the Admin Dashboard!";
                             Ulasan & Rating Wisata
                         </a>
                     </li>
+                    <li>
+                        <a href="management_ulasan_hotel.php">
+                            Ulasan & Rating Hotel
+                        </a>
+                    </li>
                 </ul>
             </li>
             <li class="sidebar-submenu">

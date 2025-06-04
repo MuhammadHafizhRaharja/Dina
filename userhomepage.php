@@ -28,6 +28,9 @@ if ($result->num_rows > 0) {
     echo "User not found!";
     exit();
 }
+
+// Ambil 8 paket perjalanan dari database
+$paketQuery = $conn->query("SELECT * FROM paket_perjalanan LIMIT 8");
 ?>
 
 <!DOCTYPE html>
@@ -247,63 +250,34 @@ if ($result->num_rows > 0) {
 
         <section class="popular section" id="popular">
             <h2 class="section__title">
-                Popular <br>
-                Destinations
+                Recommendation <br>
+                Destination packages
             </h2>
-
-            <div class="popular__carousel container swiper" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="300">
-        <div class="card-wrapper">
-            <ul class="card-list swiper-wrapper">
-                <li class="card-item swiper-slide">
-                    <div class="popular__card">
-                        <div class="popular__image">
-                            <img src="assets/kawahputih.jpg" alt="popular image" class="popular__img">
-                            <div class="popular__shadow"></div>
-                        </div>
-                        <h2 class="popular__tittle">Kawah Putih</h2>
-                        <div class="popular__location">
-                            <i class="ri-map-pin-line"></i>
-                            <span>Bandung</span>
-                        </div>
+            <div class="container" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="300">
+                <div class="swiper paketSwiper">
+                    <div class="swiper-wrapper">
+                        <?php
+                        // Ambil ulang data paket karena $paketQuery sudah habis jika dipakai sebelumnya
+                        $paketQuery2 = $conn->query("SELECT * FROM paket_perjalanan LIMIT 8");
+                        while($paket = $paketQuery2->fetch_assoc()): ?>
+                            <div class="swiper-slide">
+                                <div class="card-item-city">
+                                    <a href="pesan_paket.php?id_paket=<?= $paket['id_paket'] ?>" class="card-link-city">
+                                        <img src="<?= htmlspecialchars($paket['gambar']) ?>" alt="Card Image" class="card-image-city">
+                                        <h2 class="card-title-city"><?= htmlspecialchars($paket['nama_paket']) ?></h2>
+                                        <p class="card-paragraph-city"><?= htmlspecialchars(mb_strimwidth($paket['deskripsi'], 0, 60, '...')) ?></p>
+                                        <p class="card-paragraph-city"><b>Rp <?= number_format($paket['harga'],0,',','.') ?></b> <span style="color:maroon;">Diskon <?= $paket['diskon'] ?>%</span></p>
+                                        <button class="card-button-city material-symbols-rounded" type="button">arrow_forward</button>
+                                    </a>
+                                </div>
+                            </div>
+                        <?php endwhile; ?>
                     </div>
-                </li>
-                <li class="card-item swiper-slide">
-                    <a href="kuta.php" class="popular__card">
-                        <div class="popular__image">
-                            <img src="assets/pantaiKuta.jpg" alt="popular image" class="popular__img">
-                            <div class="popular__shadow"></div>
-                        </div>
-                        <h2 class="popular__tittle">Kuta Beach</h2>
-                        <div class="popular__location">
-                            <i class="ri-map-pin-line"></i>
-                            <span>Bali</span>
-                        </div>
-                    </a>
-                </li>
-                <li class="card-item swiper-slide">
-                    <div class="popular__card">
-                        <div class="popular__image">
-                            <img src="assets/gunungbromo.jpg" alt="popular image" class="popular__img">
-                            <div class="popular__shadow"></div>
-                        </div>
-                        <h2 class="popular__tittle">Mount Bromo</h2>
-                        <div class="popular__location">
-                            <i class="ri-map-pin-line"></i>
-                            <span>Malang</span>
-                        </div>
-                    </div>
-                </li>
-                <!-- Tambahkan destinasi lain di sini jika perlu -->
-            </ul>
-            <div class="swiper-slide-button swiper-button-prev"></div>
-            <div class="swiper-slide-button swiper-button-next"></div>
-        </div>
-        <div style="margin-top: 20px; text-align: center;">
-            <a href="street.php" class="button">
-                View More <i class="ri-arrow-right-line"></i>
-            </a>
-        </div>
-    </div>
+                    <!-- Add Arrows -->
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
+                </div>
+            </div>
         </section>
 
         <section class="explore section" id="explore">

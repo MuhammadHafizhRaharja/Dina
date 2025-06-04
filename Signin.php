@@ -15,7 +15,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['id_user'] = $row['id_user'];
             $_SESSION['username'] = $row['username'];
             $_SESSION['role'] = $row['role'];
-            header("Location: userhomepage.php");
+            // Redirect berdasarkan role
+            if ($row['role'] === 'admin') {
+                header("Location: dashboard.php");
+            } else {
+                header("Location: userhomepage.php");
+            }
             exit();
         } else {
             $error = "Password salah!";
