@@ -115,6 +115,12 @@ echo "Welcome to the Admin Dashboard!";
                             Pesanan Tiket
                         </a>
                     </li>
+
+                    <li>
+                        <a href="admin_hotel.php">
+                            Pesanan Hotel
+                        </a>
+                    </li>
                 </ul>
             </li>
             <!-- <li class="sidebar-submenu">
