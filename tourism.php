@@ -42,6 +42,21 @@ $stmt->execute();
 $res = $stmt->get_result();
 $wisata = $res->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
+
+// Logic Top 1 Destination This Week
+$topWisata = [];
+$sqlTop = "SELECT w.nama_wisata, w.link_maps, w.link_detail
+            FROM pemesanan_tiket p
+            JOIN wisata w ON p.id_wisata = w.id_wisata
+            WHERE p.tanggal_pemesanan >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+            GROUP BY p.id_wisata
+            ORDER BY COUNT(*) DESC
+            LIMIT 1";
+
+$resTop = $conn->query($sqlTop);
+if ($resTop && $resTop -> num_rows > 0) {
+    $topWisata = $resTop->fetch_assoc();
+}
 ?>
 
 <!--fitur-->
@@ -72,7 +87,13 @@ $stmt->close();
   <div class="overlay"></div>
   <div class="content">
       <h1>This Week's Top Tourism Destination</h1>
-      <a href="https://maps.app.goo.gl/4yeYbzcsf45B7CJi6"  style="color: maroon;">Nusa Dua Beach </a>
+      <?php if ($topWisata): ?>
+        <a href="<?= htmlspecialchars($topWisata['link_detail']) ?>" style="color: maroon;">
+            <?= htmlspecialchars($topWisata['nama_wisata']) ?>
+        </a>
+        <?php else: ?>
+            <span style="color: maroon;">Belum ada Pemesanan Terbanyak Minggu ini.</span>
+        <?php endif; ?>
   </div>
 </div>
 

@@ -11,11 +11,13 @@ include 'db_connection.php';
 
 // Fetch the most recent booking made by the user
 $id_user = $_SESSION['id_user'];
-$sql = "SELECT pt.id_pemesanan, w.nama_wisata, pt.tanggal, pt.jumlah_tiket, pt.tanggal_pemesanan
+$sql = "SELECT pt.id_pemesanan, u.username, w.nama_wisata, pt.tanggal, pt.jumlah_tiket, pt.tanggal_pemesanan, pt.total_harga
         FROM pemesanan_tiket pt
         JOIN wisata w ON pt.id_wisata = w.id_wisata
+        JOIN users u ON pt.id_user = u.id_user
         WHERE pt.id_user = ?
         ORDER BY pt.tanggal_pemesanan DESC LIMIT 1";
+
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $id_user);
 $stmt->execute();
@@ -28,6 +30,8 @@ if ($result->num_rows > 0) {
     header("Location: tiket_pemesanan.php");
     exit();
 }
+
+
 ?>
 
 <!DOCTYPE html>
@@ -45,6 +49,10 @@ if ($result->num_rows > 0) {
 
     <table>
         <tr>
+        <th>Username</th>
+        <td><?= htmlspecialchars($booking['username']) ?></td>
+    </tr>
+        <tr>
             <th>Nama Wisata</th>
             <td><?= htmlspecialchars($booking['nama_wisata']) ?></td>
         </tr>
@@ -57,6 +65,10 @@ if ($result->num_rows > 0) {
             <td><?= $booking['jumlah_tiket'] ?></td>
         </tr>
         <tr>
+            <th>Total Harga</th>
+            <td>Rp.<?= number_format($booking['total_harga'], 0, ',', '.') ?></td>
+        </tr>
+        <tr>
             <th>Tanggal Pemesanan</th>
             <td><?= date('d M Y', strtotime($booking['tanggal_pemesanan'])) ?></td>
         </tr>
@@ -64,7 +76,7 @@ if ($result->num_rows > 0) {
 
     <div class="actions">
         <a href="riwayat_pemesanan.php" class="btn">Lihat Riwayat Pemesanan</a>
-        <a href="kutatourism.php" class="btn">Pesan Tiket Baru</a>
+        <a href="tourism.php" class="btn">Pesan Tiket Baru</a>
     </div>
 </body>
 </html>

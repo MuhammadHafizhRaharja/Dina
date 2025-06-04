@@ -16,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $jumlah_orang = intval($_POST['jumlah_orang'] ?? 0);
     $pesan = $_POST['pesan'] ?? '';
     $id_meja = intval($_POST['id_meja'] ?? 0);
-    $id_restaurants = $_POST['id_restaurants'] ?? '';
+    $id_restaurants = $_GET['id_restaurants'] ?? 1;
 
     $total_biaya = $jumlah_orang * $biaya_per_orang;
 
@@ -139,26 +139,6 @@ include 'views/header2.php';
 <div style="border-top: 2px solid maroon; padding-top: 115px; margin-left: 300px; margin-right: 300px;" data-aos="fade-up" data-aos-duration="1500" data-aos-delay="300"></div>
 
 <!-- Review Section -->
-<?php
-// Tambah ulasan
-if (isset($_POST['tambah'])) {
-    $id_user = $_POST['id_user'];
-    $id_restoran = $_POST['id_restoran'];
-    $rating = $_POST['rating'];
-    $komentar = $_POST['komentar'];
-
-    $stmt = $conn->prepare("INSERT INTO ulasan (id_user, id_restoran, rating, komentar) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("iiis", $id_user, $id_restoran, $rating, $komentar);
-    $stmt->execute();
-}
-
-// Hapus ulasan
-if (isset($_GET['hapus'])) {
-    $id_ulasan = $_GET['hapus'];
-    $conn->query("DELETE FROM ulasan WHERE id_ulasan = $id_ulasan");
-}
-?>
-
 <h1 class="review-h1">Ulasan Terbaru</h1>
 <div class="review-container">
     <?php
@@ -166,6 +146,7 @@ if (isset($_GET['hapus'])) {
         SELECT u.*, us.fullname, us.foto_profil 
         FROM ulasan u
         JOIN users us ON u.id_user = us.id_user
+        WHERE u.id_restaurants = $id_restaurants
         ORDER BY u.tanggal DESC
         LIMIT 3
     ");
@@ -193,9 +174,10 @@ if (isset($_GET['hapus'])) {
     <?php endwhile; ?>
 </div>
 
+
 <div class="actions">
-    <a href="semua_ulasan.php" class="btn">See More</a>
-    <a href="tambah_ulasan.php" class="btn">Review</a>
+    <a href="semua_ulasan.php?id_restaurants=<?= $id_restaurants ?>" class="btn">See More</a>
+    <a href="tambah_ulasan.php?id_restaurants=<?= $id_restaurants ?>" class="btn">Review</a>
 </div>
 
 <?php include 'views/footer4.php'; ?>
