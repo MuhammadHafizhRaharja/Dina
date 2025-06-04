@@ -1,7 +1,7 @@
 <?php
 include 'CRUD/reservasi restoran/db.php';
 
-$id_restaurants = 5;
+$id_restaurants = 10;
 
 $biaya_per_orang = 100000;
 $pesan_error = "";
@@ -74,11 +74,11 @@ include 'views/header2.php';
 
 <div class="container-resto">
     <div class="contact-resto" data-aos="fade-left" data-aos-duration="1500" data-aos-delay="300">
-        <h2>Koral Restaurant</h2>
-        <img alt="Restaurant exterior with tables and chairs" height="200" src="media/restoo5.jpg" width="300"/>
+        <h2>Altitude Grill</h2>
+        <img alt="Restaurant exterior with tables and chairs" height="200" src="media/restob5.jpg" width="300"/>
         <div>
             <p style="padding-top: 20px; color: white;"><strong>Location</strong></p>
-            <p style="font-size: 14px;">Jl. Raya Nusa Dua Selatan, Sawangan, Nusa Dua, Kabupaten Badung, Bali</p>
+            <p style="font-size: 14px;">Ciburial, Kec. Cimenyan, Kabupaten Bandung, Jawa Barat 40198</p>
             <p style="padding-top: 10px; color: white;"><strong> Opening Hours</strong></p>
             <p style="font-size: 14px;">Monday to Sunday</p>
             <p style="font-size: 14px;">08.00 - 22.00</p>
@@ -129,7 +129,7 @@ include 'views/header2.php';
 
             <div class="button-resto">
                 <button type="submit" style="background-color: maroon;">BOOK A TABLE</button>
-                <a href="restaurant.php"><button type="button">Back to Menu</button></a>
+                <a href="restaurantBandung.php"><button type="button">Back to Menu</button></a>
             </div>
         </form>
     </div>

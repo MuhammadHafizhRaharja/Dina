@@ -1,3 +1,43 @@
+<?php
+include 'CRUD/reservasi restoran/db.php';
+
+// Misal hotel yang dipilih/ditampilkan adalah hotel_id
+$hotel_id = 9;
+
+// Ambil room types dari database untuk hotel ini
+$sql = "SELECT type_key, name, price FROM room_types WHERE hotel_id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $hotel_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+$roomTypes = [];
+while ($row = $result->fetch_assoc()) {
+    $roomTypes[$row['type_key']] = [
+        'name' => $row['name'],
+        'price' => $row['price']
+    ];
+}
+$stmt->close();
+
+// Ambil data dari form / default
+$selectedType = $_POST['room_type'] ?? array_key_first($roomTypes); // default ke key pertama
+$checkin = $_POST['checkin'] ?? '';
+$checkout = $_POST['checkout'] ?? '';
+
+$pricePerNight = $roomTypes[$selectedType]['price'] ?? 0;
+
+$nightCount = 0;
+$totalPrice = 0;
+
+if ($checkin && $checkout) {
+    $start = new DateTime($checkin);
+    $end = new DateTime($checkout);
+    $interval = $start->diff($end);
+    $nightCount = max(1, $interval->days);
+    $totalPrice = $nightCount * $pricePerNight;
+}
+?>
 
 <!doctype html>
 <html lang="en">
@@ -8,100 +48,67 @@
     <link rel="icon" type="logotype/png" href="Assets/logoerase.png">
     <title>DINA</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"  rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet"/>
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     <link rel="stylesheet" href="reservation.css">
 </head>
 
-<?php
-include 'views/header2.php';
-?>
+<?php include 'views/header2.php'; ?>
 
-
-    <!-- reservation -->
-    <section class="checkout py-5">
-        <div class="container-form">
-            <div class="page-title" data-aos="fade-down" data-aos-duration="1000" data-aos-delay="300">
-                <h1>Reservation</h1>
+<section class="checkout py-5" style="background-color: #000; color: white;">
+    <div class="container px-4">
+        <div class="row align-items-center">
+            <!-- Info Hotel -->
+            <div class="col-md-3 mb-4 text-center" data-aos="fade-right" data-aos-duration="1500" data-aos-delay="300">
+                <h2 class="mb-3" style="text-align: center">De Braga by Artotel</h2>
+                <img src="media/hotel4.jpeg" alt="Room Image" class="img-fluid rounded mb-3" width="300px">
+                <p><strong>Location:</strong><br>Jl. Braga No.10, Braga, Kec. Sumur Bandung, Kota Bandung, Jawa Barat 40111</p>
+                <p><strong>Opening Hours:</strong><br>24 Hours, Monday to Sunday</p>
             </div>
 
-            <div class="row" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="300">
-                <div class="col-md-6 p-4">
-                    <div class="card border-0">
-                        <img src="media/hotel4.jpeg" class="card-img-top" alt="Room Image">
-                        <div class="card-body px-0">
-                            <h2 class="card-title ls-3">De Braga by Artotel</h2>
-                            <p class="card-text mb-0">Max Guests: 2</p>
-                            <p class="card-text mb-0">Tipe : Luxury Room</p>
-                            <p class="card-text mb-0">Price: Rp850.000/night</p>
+            <!-- Form -->
+            <div class="col-md-7" data-aos="fade-left" data-aos-duration="1500" data-aos-delay="300">
+                <h3 class="mb-4 border-start border-danger ps-3 text-center">Reservation Hotel</h3>
+                <form method="POST" action="CRUD/reservasi_hotel/detail_pembayaran.php">
+                    <input type="text" name="name" class="form-control mb-3 bg-dark text-white" placeholder="Your Name" required>
+                    <input type="email" name="email" class="form-control mb-3 bg-dark text-white" placeholder="Your Email" required>
+                    <input type="tel" name="phone" class="form-control mb-3 bg-dark text-white" placeholder="Phone Number" required>
+
+                    <div class="row">
+                        <div class="col">
+                            <input type="date" name="checkin" class="form-control mb-3 bg-dark text-white" value="<?= $checkin ?>" required>
+                        </div>
+                        <div class="col">
+                            <input type="date" name="checkout" class="form-control mb-3 bg-dark text-white" value="<?= $checkout ?>" required>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-6 p-4">
-                    <form action="hotelBandung.php">
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="name">
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email">
-                        </div>
-                        <div class="mb-3">
-                            <label for="address" class="form-label">Phone</label>
-                            <input type="tel" class="form-control" id="email">
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="checkin" class="form-label">Check-in Date</label>
-                                    <input type="date" class="form-control" id="checkin">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="checkout" class="form-label">Check-out Date</label>
-                                    <input type="date" class="form-control" id="checkout">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="mb-3">
-                                    <label for="expiration" class="form-label">Night</label>
-                                    <input type="number" class="form-control" id="expiration">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="cardnumber" class="form-label">Credit Card Number</label>
-                                    <input type="text" class="form-control" id="cardnumber">
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="mb-3">
-                                    <label for="cvv" class="form-label">CVV</label>
-                                    <input type="text" class="form-control" id="cvv">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="text-end">
-                            <a href="hotelBandung.php">
-                                <button type="submit" class="btn btn-back mt-4" style="margin-right: 15px;">Back to menu</button>
-                            </a>
-                                <button type="submit" class="btn btn-orange mt-4">Complete Checkout</button>
-                        </div>
-                    </form>
-                </div>
+
+                    <select name="room_type" class="form-select mb-3 bg-dark text-white" required>
+                        <?php foreach ($roomTypes as $key => $room): ?>
+                            <option value="<?= htmlspecialchars($key) ?>" <?= $selectedType == $key ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($room['name']) ?> - Rp<?= number_format($room['price'], 0, ',', '.') ?>/night
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+
+                    <!-- Tambahan penting -->
+                    <input type="hidden" name="hotel_id" value="<?= $hotel_id ?>">
+
+                    <textarea class="form-control mb-3 bg-dark text-white" name="special_request" placeholder="Special Request (optional)" rows="3"></textarea>
+
+                    <div class="d-flex justify-content-end">
+                        <a href="hotelBandung.php" class="btn btn-grey me-2">Back to Menu</a>
+                        <button type="submit" class="btn btn-maroon">Book Now</button>
+                    </div>
+                </form>
             </div>
         </div>
-    </section>
-    <!-- reservation -->
+    </div>
+</section>
 
-    <!--Review-->
+<!--Review-->
     <div class="reviews-container" data-aos="fade-down" data-aos-duration="1200" data-aos-delay="300">
         <div class="review-card" >
             <div class="review-header">
@@ -169,7 +176,5 @@ include 'views/header2.php';
             </div>
         </div>
     </div>
-    
-    <?php
-     include 'views/footer3.php';
-    ?>
+
+<?php include 'views/footer3.php'; ?>

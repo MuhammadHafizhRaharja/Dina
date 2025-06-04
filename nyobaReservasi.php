@@ -2,7 +2,7 @@
 include 'CRUD/reservasi restoran/db.php';
 
 // Misal hotel yang dipilih/ditampilkan adalah hotel_id
-$hotel_id = 5;
+$hotel_id = 10;
 
 // Ambil room types dari database untuk hotel ini
 $sql = "SELECT type_key, name, price FROM room_types WHERE hotel_id = ?";
@@ -62,10 +62,10 @@ if ($checkin && $checkout) {
         <div class="row align-items-center">
             <!-- Info Hotel -->
             <div class="col-md-3 mb-4 text-center" data-aos="fade-right" data-aos-duration="1500" data-aos-delay="300">
-                <h2 class="mb-3" style="text-align: center">Mercure Bali Nusa Dua</h2>
-                <img src="media/mercurebali.webp" alt="Room Image" class="img-fluid rounded mb-3" width="300px">
-                <p><strong>Location:</strong><br>Jalan Nusa Dua Selatan Lot Sw 03, Jl. Nusa Dua, Badung Regency, Bali 80363</p>
-                <p><strong>Opening Hours:</strong><br>12 Hours, Monday to Sunday</p>
+                <h2 class="mb-3" style="text-align: center">The Trans Luxury Hotel</h2>
+                <img src="media/hotel5.webp" alt="Room Image" class="img-fluid rounded mb-3" width="300px">
+                <p><strong>Location:</strong><br> Jl. Gatot Subroto No.289, Cibangkong, Kec. Batununggal, Kota Bandung, Jawa Barat 40273</p>
+                <p><strong>Opening Hours:</strong><br>24 Hours, Monday to Sunday</p>
             </div>
 
             <!-- Form -->
@@ -99,7 +99,7 @@ if ($checkin && $checkout) {
                     <textarea class="form-control mb-3 bg-dark text-white" name="special_request" placeholder="Special Request (optional)" rows="3"></textarea>
 
                     <div class="d-flex justify-content-end">
-                        <a href="slider.php" class="btn btn-grey me-2">Back to Menu</a>
+                        <a href="hotelBandung.php" class="btn btn-grey me-2">Back to Menu</a>
                         <button type="submit" class="btn btn-maroon">Book Now</button>
                     </div>
                 </form>
