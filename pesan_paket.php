@@ -29,10 +29,6 @@ while ($detail = $detailResult->fetch_assoc()) {
         $hotel = $conn->query("SELECT * FROM hotels WHERE id={$detail['id_hotel']}")->fetch_assoc();
         if ($hotel) $hotels[] = $hotel;
     }
-    if ($detail['id_restaurants']) {
-        $resto = $conn->query("SELECT * FROM restaurants WHERE id_restaurants={$detail['id_restaurants']}")->fetch_assoc();
-        if ($resto) $restos[] = $resto;
-    }
     if ($detail['id_wisata']) {
         $wisata = $conn->query("SELECT * FROM wisata WHERE id_wisata={$detail['id_wisata']}")->fetch_assoc();
         if ($wisata) $wisatas[] = $wisata;
@@ -41,9 +37,8 @@ while ($detail = $detailResult->fetch_assoc()) {
 
 // Hitung harga asli (tanpa diskon)
 $harga_asli = 0;
-foreach ($hotels as $hotel) $harga_asli += isset($hotel['reservasi']) ? (int)$hotel['reservasi'] : 0;
-foreach ($restos as $resto) $harga_asli += 50000; // contoh harga makan, sesuaikan jika ada field harga
-foreach ($wisatas as $wisata) $harga_asli += isset($wisata['harga']) ? (int)$wisata['harga'] : 0;
+foreach ($hotels as $hotel) $harga_asli += (int)$hotel['reservasi'];
+foreach ($wisatas as $wisata) $harga_asli += (int)$wisata['harga'];
 
 // Harga diskon dari paket
 $harga_diskon = $paket['harga'];
@@ -99,6 +94,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header("Location: konfirmasi_pemesanan.php");
         exit();
     }
+}
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['pesan'])) {
+    $tanggal = $_POST['tanggal'];
+    $id_user = $_SESSION['id_user'];
+    $total_harga = $paket['harga'];
+    $stmt = $conn->prepare("INSERT INTO pemesanan_paket (id_user, id_paket, tanggal, total_harga) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("iisi", $id_user, $id_paket, $tanggal, $total_harga);
+    $stmt->execute();
+    $stmt->close();
+    echo "<script>alert('Paket berhasil dipesan!');window.location='riwayat_pemesanan_paket.php';</script>";
 }
 ?>
 <!DOCTYPE html>

@@ -289,7 +289,6 @@ session_start();
                         <a href="Signin.php" class="join__button button">
                             Log In<i class="ri-arrow-right-line"></i>
                         </a>
-                        
                     </form>
                 </div>
 

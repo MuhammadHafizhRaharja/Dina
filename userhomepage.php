@@ -210,7 +210,7 @@ $paketQuery = $conn->query("SELECT * FROM paket_perjalanan LIMIT 8");
                             <li class="card-item swiper-slide">
                                 <a href="#" class="card-link">
                                     <img src="Assets/NTT.jpg" alt="Card Image" class="card-image">
-                                    <h2 class="card-title">NUSA TENGGARA TIMUR</H2>
+                                    <h2 class="card-title">NUSA TENGGARA TIMUR</h2>
                                 </a>
                             </li>
                         </ul>
@@ -218,8 +218,6 @@ $paketQuery = $conn->query("SELECT * FROM paket_perjalanan LIMIT 8");
                         <div class="swiper-slide-button swiper-button-next"></div>
                     </div>
                 </div>
-
-
             </div>
             </div>
         </section>
@@ -253,31 +251,39 @@ $paketQuery = $conn->query("SELECT * FROM paket_perjalanan LIMIT 8");
                 Recommendation <br>
                 Destination packages
             </h2>
-            <div class="container" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="300">
-                <div class="swiper paketSwiper">
-                    <div class="swiper-wrapper">
-                        <?php
-                        // Ambil ulang data paket karena $paketQuery sudah habis jika dipakai sebelumnya
-                        $paketQuery2 = $conn->query("SELECT * FROM paket_perjalanan LIMIT 8");
-                        while($paket = $paketQuery2->fetch_assoc()): ?>
-                            <div class="swiper-slide">
-                                <div class="card-item-city">
-                                    <a href="pesan_paket.php?id_paket=<?= $paket['id_paket'] ?>" class="card-link-city">
-                                        <img src="<?= htmlspecialchars($paket['gambar']) ?>" alt="Card Image" class="card-image-city">
-                                        <h2 class="card-title-city"><?= htmlspecialchars($paket['nama_paket']) ?></h2>
-                                        <p class="card-paragraph-city"><?= htmlspecialchars(mb_strimwidth($paket['deskripsi'], 0, 60, '...')) ?></p>
-                                        <p class="card-paragraph-city"><b>Rp <?= number_format($paket['harga'],0,',','.') ?></b> <span style="color:maroon;">Diskon <?= $paket['diskon'] ?>%</span></p>
-                                        <button class="card-button-city material-symbols-rounded" type="button">arrow_forward</button>
-                                    </a>
-                                </div>
-                            </div>
-                        <?php endwhile; ?>
-                    </div>
-                    <!-- Add Arrows -->
-                    <div class="swiper-button-next"></div>
-                    <div class="swiper-button-prev"></div>
-                </div>
-            </div>
+
+<div class="container swiper" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="300">
+    <div class="card-wrapper">
+        <ul class="card-list-city swiper-wrapper">
+            <?php
+            $paketQuery = $conn->query("SELECT * FROM paket_perjalanan");
+            if ($paketQuery->num_rows == 0): ?>
+                <p style="padding:1rem">Belum ada paket tersedia.</p>
+            <?php endif; ?>
+            <?php while($paket = $paketQuery->fetch_assoc()): ?>
+                <li class="card-item-city swiper-slide">
+                    <a href="pesan_paket.php?id_paket=<?= $paket['id_paket'] ?>" class="card-link-city">
+                        <?php if ($paket['diskon'] > 0): ?>
+                            <span class="badge-diskon"><?= $paket['diskon'] ?>% OFF</span>
+                        <?php endif; ?>
+                        <img src="<?= htmlspecialchars($paket['gambar']) ?>" alt="<?= htmlspecialchars($paket['nama_paket']) ?>" class="card-image-city">
+                        <h2 class="card-title-city"><?= htmlspecialchars($paket['nama_paket']) ?></h2>
+                        <p class="card-paragraph-city"><?= htmlspecialchars(mb_strimwidth($paket['deskripsi'], 0, 60, '...')) ?></p>
+                        <div class="harga-wrap">
+                            <?php if ($paket['diskon'] > 0): ?>
+                                <span class="harga-asli">Rp <?= number_format($paket['harga_asli'],0,',','.') ?></span>
+                            <?php endif; ?>
+                            <span class="harga-diskon">Rp <?= number_format($paket['harga'],0,',','.') ?></span>
+                        </div>
+                    </a>
+                </li>
+            <?php endwhile; ?>
+        </ul>
+        <div class="swiper-pagination"></div>
+        <div class="swiper-slide-button swiper-button-prev"></div>
+        <div class="swiper-slide-button swiper-button-next"></div>
+    </div>
+</div>
         </section>
 
         <section class="explore section" id="explore">
