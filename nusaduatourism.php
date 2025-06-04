@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id_user = $_SESSION['id_user'];
     $tanggal = $_POST['tanggal'];
     $jumlah_tiket = $_POST['jumlah_tiket'];
-    $total_harga = $jumlah_tiket * $wisata['harga']; //ngitung total
+    $total_harga = $jumlah_tiket * $wisata['harga']; //Menghitung total
 
     $stmt = $conn->prepare("INSERT INTO pemesanan_tiket (id_user, id_wisata, tanggal, jumlah_tiket, total_harga) VALUES (?, ?, ?, ?, ?)");
     $stmt->bind_param("iisid", $id_user, $id_wisata, $tanggal, $jumlah_tiket, $total_harga);
@@ -34,6 +34,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     header("Location: konfirmasi_pemesanan.php"); // Redirect to confirmation page
     exit();
 }
+    $ulasan = $conn->query("
+    SELECT uw.*, u.fullname, u.foto_profil
+    FROM ulasan_wisata uw
+    JOIN users u ON uw.id_user = u.id_user
+    WHERE uw.id_wisata = $id_wisata
+    ORDER BY uw.tanggal DESC
+    LIMIT 3
+    ");
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -41,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <title><?= htmlspecialchars($wisata['nama_wisata']) ?> - Bali</title>
     <link rel="stylesheet" href="detailtourism.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="icon" type="logotype/png" href="Assets/logoerase.png">
 </head>
 <body>
@@ -96,6 +105,46 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <div class="actions">
         <a href="riwayat_pemesanan.php" class="btn">Lihat Riwayat Pemesanan</a>
     </div>
+
+   <h1 class="review-h1">Ulasan Pengunjung</h1>
+   <div class="review-container">
+    <?php
+    $ulasan = $conn->query("
+        SELECT uw.*, us.fullname, us.foto_profil 
+        FROM ulasan_wisata uw
+        JOIN users us ON uw.id_user = us.id_user
+        WHERE uw.id_wisata = $id_wisata
+        ORDER BY uw.tanggal DESC
+        LIMIT 3
+    ");
+    while ($row = $ulasan->fetch_assoc()):
+    ?>
+    <div class="review-card">
+        <div class="review-header">
+            <div class="stars">
+                <?php
+                $rating = (int)($row['rating'] ?? 0);
+                for ($i = 1; $i <= 5; $i++): ?>
+                    <i class="fas fa-star <?= ($i <= $rating) ? '' : 'inactive' ?>"></i>
+                <?php endfor; ?>
+            </div>
+        </div>
+        <div class="review-content">
+            <?= htmlspecialchars($row['komentar']) ?>
+        </div>
+        <div class="review-footer">
+            <img src="<?= $row['foto_profil'] ?>" width="40" height="40" alt="Foto profil">
+            <div class="username"><?= $row['fullname'] ?></div>
+            <div class="date"><?= date('d M Y', strtotime($row['tanggal'])) ?></div>
+        </div>
+    </div>
+    <?php endwhile; ?>
+</div>
+    <div class="actions">
+        <a href="semua_ulasan_wisata.php?id_wisata=<?= $id_wisata ?>" class="btn">Lihat Semua Ulasan</a>
+        <a href="tambah_ulasan_wisata.php?id_wisata=<?= $id_wisata ?>" class="btn">Tambah Ulasan</a>
+    </div>
+
 </body>
 </html>
     <?php

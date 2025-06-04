@@ -82,7 +82,12 @@ echo "Welcome to the Admin Dashboard!";
                     </li>
                     <li>
                         <a href="Management_ulasan_dan_rating.php">
-                            Ulasan & Rating
+                            Ulasan & Rating Restoran
+                        </a>
+                    </li>
+                    <li>
+                        <a href="management_ulasan_wisata.php">
+                            Ulasan & Rating Wisata
                         </a>
                     </li>
                 </ul>
