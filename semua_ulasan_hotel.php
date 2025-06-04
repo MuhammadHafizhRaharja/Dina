@@ -59,7 +59,7 @@ $id_hotel = $_GET['id_hotel'] ?? 1;
         <?php endwhile; ?>
     </div>
     <div class="actions">
-        <a href="reservation<?= $id_hotel ?>.php" class="btn">← Kembali</a>
+        <a href="userhomepage.php" class="btn">← Kembali</a>
     </div>
 </body>
 </html>

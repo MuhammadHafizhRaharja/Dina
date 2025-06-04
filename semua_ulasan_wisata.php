@@ -66,7 +66,7 @@ $id_wisata = $_GET['id_wisata'] ?? 1;
 
     
     <div class="actions">
-        <a href="tourism.php" class="btn">← Kembali</a>
+        <a href="userhomepage.php" class="btn">← Kembali</a>
     </div>
 
 </body>

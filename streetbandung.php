@@ -18,6 +18,36 @@
 
 </head>
 <?php
+include 'CRUD/reservasi restoran/db.php';
+
+$search  = strtolower(trim($_GET['search'] ?? ''));
+$streets = [];
+$city   = 'Bandung';
+
+if ($search === '') {
+    $sql  = "SELECT nama_jalan, deskripsi, gambar, link_maps
+             FROM dina_streets
+             WHERE LOWER(city) = ?
+             ORDER BY nama_jalan ASC";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('s', $city);
+} else {
+    $sql  = "SELECT nama_jalan, deskripsi, gambar, link_maps
+             FROM dina_streets
+             WHERE LOWER(city) = ? AND (LOWER(nama_jalan) LIKE ? OR LOWER(deskripsi) LIKE ?)
+             ORDER BY nama_jalan ASC";
+    $like = "%$search%";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('sss', $city, $like, $like);
+}
+
+$stmt->execute();
+$res = $stmt->get_result();
+$streets = $res->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
+?>
+
+<?php
 include 'views/header1.php';
 ?>
 
@@ -31,83 +61,48 @@ include 'views/header1.php';
     </div>
 
     <div class="nav-search" data-aos="fade-down" data-aos-duration="900" data-aos-delay="400">
-        <div class="nav-item on"><a href="streetbandung.php" class="material-symbols-outlined">explore_nearby<p>Place To Go</p></a></div>
-        <div class="nav-item"><a href="hotelBandung.php" class="material-symbols-outlined">hotel <p>Hotel</p></a></div>
-        <div class="nav-item"><a href="mallBandung.php" class="material-symbols-outlined">local_mall <p>Shopping Place</p></a></div>
-        <div class="nav-item"><a href="restaurantBandung.php" class="material-symbols-outlined">restaurant <p>Restaurant</p></a></div>
-        <div class="nav-item"><a href="tourismbandung.php" class="material-symbols-outlined">explore <p>Tourism</p></a></div>
+        <div class="nav-item on"><a href="street.php" class="material-symbols-outlined">explore_nearby<p>Place To Go</p></a></div>
+        <div class="nav-item"><a href="slider.php" class="material-symbols-outlined">hotel <p>Hotel</p></a></div>
+        <div class="nav-item"><a href="mall.php" class="material-symbols-outlined">local_mall <p>Shopping Place</p></a></div>
+        <div class="nav-item"><a href="restaurant.php" class="material-symbols-outlined">restaurant <p>Restaurant</p></a></div>
+        <div class="nav-item"><a href="tourism.php" class="material-symbols-outlined">explore <p>Tourism</p></a></div>
     </div>
-    <div class="search-bar" data-aos="fade-down" data-aos-duration="900" data-aos-delay="400">
-        <i class="fas fa-search"></i>
-        <input type="text" placeholder="Tempat untuk dikunjungi, hal yang dapat dilakukan, hotel...">
-        <button>Cari</button>
-    </div>
+    <form class="search-bar" method="get" action="street.php">
+            <i class="fas fa-search"></i>
+            <input type="text" name="search"
+                value="<?= htmlspecialchars($search) ?>" placeholder="Search streets in Bandung...">
+            <button type="submit">Find</button>
+        </form>
 </div>
- <!--content-->
- <h2 class="title" data-aos="fade-up"
- data-aos-duration="500"
- data-aos-delay="100">Street in <Span style="color: maroon;">Bandung</Span></h2>
-<div class="container swiper" data-aos="fade-up"
-data-aos-duration="900"
-data-aos-delay="400">
+ <!-- content -->
+<div class="container swiper" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="300">
     <div class="card-wrapper">
         <ul class="card-list swiper-wrapper">
-            <li class="card-item swiper-slide">
-                <a href="https://maps.app.goo.gl/1PbxJYsSVhaccCvQ9" class="card-link">
-                    <img src="Assets/Braga.jpg" alt="Braga" class="card-image">
-                    <h2 class="card-title">Jl. Braga</h2><br>
-                    <h3>Ikon kota Bandung yang dikenal sejak masa Hindia Belanda, menawarkan suasana klasik dengan deretan kafe, restoran, dan galeri seni.</h3>
-                </a>
-                <button class="button" onclick="window.location.href='bragastreet.php';">view more</button>
-            </li>
-            <li class="card-item swiper-slide">
-                <a href="https://maps.app.goo.gl/t8y144TzDTBVHXAK7" class="card-link">
-                    <img src="Assets/asiaafrika.jpg" alt="Asia afrika" class="card-image">
-                    <h2 class="card-title">Jl. Asia Afrika</h2><br>
-                    <h3>Memiliki nilai sejarah tinggi sebagai lokasi Konferensi Asia Afrika 1955, dengan bangunan bergaya kolonial yang menarik untuk dikunjungi.</h3>
-                   </a> 
-                   <button class="button" onclick="window.location.href='asiaafrikastreet.php';">view more</button>
-            </li>
-            <li class="card-item swiper-slide">
-                <a href="https://maps.app.goo.gl/yiQr4D2sAzQuvzU1A" class="card-link">
-                    <img src="Assets/dago.jpg" alt="Dago" class="card-image">
-                    <h2 class="card-title">Jl. Dago</h2><br>
-                    <h3>Kawasan populer dengan berbagai pusat perbelanjaan, kafe, dan tempat hiburan, serta suasana yang asri dengan deretan pohon rindang.</h3>
-                </a>
-                <button class="button" onclick="window.location.href='dagostreet.php';">view more</button>
-            </li>
-            <li class="card-item swiper-slide">
-                <a href="https://maps.app.goo.gl/3ywiWndn7WX5pw476" class="card-link">
-                    <img src="Assets/cihampelas.jpg" alt="Cihampelas" class="card-image">
-                    <h2 class="card-title">Jl. Cihampelas</h2><br>
-                    <h3>Dikenal sebagai pusat penjualan pakaian dan oleh-oleh, dengan suasana malam yang semarak dan adanya pusat perbelanjaan Cihampelas Walk (Ciwalk).</h3>
-                </a>
-                <button class="button" onclick="window.location.href='cihampelasstreet.php';">view more</button>
-            </li>
-            <li class="card-item swiper-slide">
-                <a href="https://maps.app.goo.gl/FtcfNgr4YdjcqNxV8" class="card-link">
-                    <img src="Assets/riau.jpg" alt="Jalan Riau (RE Martadinata)" class="card-image">
-                    <h2 class="card-title">Jl. Riau (RE Martadinata)</h2><br>
-                    <h3>Terkenal dengan factory outlet dan tempat nongkrong yang menarik, serta trotoar luas yang nyaman untuk pejalan kaki.</h3>
-                </a>
-                <button class="button" onclick="window.location.href='riaustreet.php';">view more</button>
-            </li>
-            <li class="card-item swiper-slide">
-              <a href="https://maps.app.goo.gl/j5MAhceyVnMUT5HZ8" class="card-link">
-                  <img src="Assets/cipaganti.jpg" alt="Cipaganti" class="card-image">
-                  <h2 class="card-title">Jl. Cipaganti</h2><br>
-                  <h3>Memiliki deretan rumah dengan arsitektur khas Belanda dan suasana asri, sering dijadikan lokasi syuting film. </h3>
-                </a>
-                <button class="button" onclick="window.location.href='cipagantistreet.php';">view more</button>
-          </li>
-        </ul>
+            <?php if (!$streets): ?>
+                <p style="padding:1rem">Tidak ada hasil untuk “<?= htmlspecialchars($search) ?>”.</p>
+            <?php endif; ?>
 
+            <?php foreach ($streets as $s): ?>
+                <li class="card-item swiper-slide">
+                    <a href="<?= htmlspecialchars($s['link_maps']) ?>" class="card-link" target="_blank">
+                        <img src="<?= htmlspecialchars($s['gambar']) ?>"
+                             alt="<?= htmlspecialchars($s['nama_jalan']) ?>"
+                             class="card-image">
+
+                        <h2 class="card-title"><?= htmlspecialchars($s['nama_jalan']) ?></h2><br>
+                        <p class="card-paragraph"><?= htmlspecialchars($s['deskripsi']) ?></p><br>
+                        <button class="card-button material-symbols-rounded" type="button">arrow_forward</button>
+                    </a>
+                </li>
+            <?php endforeach; ?>
+        </ul>
 
         <div class="swiper-pagination"></div>
         <div class="swiper-slide-button swiper-button-prev"></div>
         <div class="swiper-slide-button swiper-button-next"></div>
     </div>
 </div>
+
 
 <!--Content2-->
 <h2 class="title"data-aos="fade-up"
@@ -119,44 +114,52 @@ data-aos-delay="400">
     <div class="card-wrapper">
         <ul class="card-list swiper-wrapper">
             <li class="card-item swiper-slide">
-                <a href="https://maps.app.goo.gl/fkirwetoaZ4rsehB7" class="card-link">
-                    <img src="Assets/antapani.jpg" alt="Antapani" class="card-image">
-                    <h2 class="card-title">Jl. Antapani</h2><br>
-                    <h3>Menampilkan jembatan dengan mural berwarna-warni yang indah, terutama saat malam hari, serta area perbelanjaan dan lapangan untuk acara seni.</h3>
+                <a href="https://maps.app.goo.gl/LTqPn7xJHbLBXgGv7" class="card-link">
+                    <img src="Assets/legian.jpg" alt="Legian" class="card-image">
+                    <h2 class="card-title">Jl. Legian</h2><br>
+                    <h3>Terletak di Kuta, terkenal dengan kehidupan malam, klub, restoran, dan area perbelanjaan.</h3>
                 </a>
-                <button class="button" onclick="window.location.href='antapanistreet.php';">view more</button>
+                <button class="button" onclick="window.location.href='legianstreet.php';">view more</button>
             </li>
             <li class="card-item swiper-slide">
-                <a href="https://maps.app.goo.gl/ZotcvoY55sKHP8K78" class="card-link">
-                    <img src="Assets/setiabudi.jpg" alt="Setiabudi" class="card-image">
-                    <h2 class="card-title">Jl. Setiabudi</h2><br>
-                    <h3>Merupakan akses utama menuju Lembang, dengan berbagai tempat kuliner dan pusat oleh-oleh khas Bandung.</h3>
+                <a href="https://maps.app.goo.gl/ELNrw4b3YfVnaUtX8" class="card-link">
+                    <img src="Assets/raya ubud.jpg" alt="Raya Ubud" class="card-image">
+                    <h2 class="card-title">Jl. Raya Ubud</h2><br>
+                    <h3>Jalan utama di Ubud yang dipenuhi galeri seni, kafe, dan toko kerajinan, menarik wisatawan lokal dan mancanegara.</h3>
                 </a>
-                <button class="button" onclick="window.location.href='setiabudistreet.php';">view more</button>
+                <button class="button" onclick="window.location.href='rayaubudstreet.php';">view more</button>
             </li>
             <li class="card-item swiper-slide">
-                <a href="https://maps.app.goo.gl/3qrf9f4FkgUV3pRQA" class="card-link">
-                    <img src="Assets/pasteur.jpg" alt="Pasteur" class="card-image">
-                    <h2 class="card-title">Jl. Pasteur</h2><br>
-                    <h3>Gerbang masuk kota Bandung dari arah Jakarta, sering dilalui wisatawan dengan berbagai hotel dan pusat perbelanjaan di sekitarnya.</h3>
+                <a href="https://maps.app.goo.gl/RANysebgAFZANmxh7" class="card-link">
+                    <img src="Assets/sunset road.jpg" alt="Sunset Road" class="card-image">
+                    <h2 class="card-title">Jl. Sunset Road</h2><br>
+                    <h3>Jalan besar di Kuta yang menghubungkan daerah wisata utama seperti Seminyak dan Legian, dipenuhi hotel dan restoran.</h3>
                 </a>
-                <button class="button" onclick="window.location.href='pasteurstreet.php';">view more</button>
+                <button class="button" onclick="window.location.href='sunsetroadstreet.php';">view more</button>
             </li>
             <li class="card-item swiper-slide">
-                <a href="https://maps.app.goo.gl/XjSq9wRxuR298XWP9" class="card-link">
-                    <img src="Assets/sudirman.jpg" alt="Sudirman" class="card-image">
-                    <h2 class="card-title">Jl. Sudirman</h2><br>
-                    <h3>Menjadi lokasi Sudirman Street Day and Night Market, pasar malam yang menawarkan berbagai kuliner dan hiburan.</h3>
+                <a href="https://maps.app.goo.gl/z6qCHDeaopgH9cdSA" class="card-link">
+                    <img src="Assets/raya seminyak.jpg" alt="Raya Seminyak" class="card-image">
+                    <h2 class="card-title">Jl. Raya Seminyak</h2><br>
+                    <h3>Jalan utama di Seminyak yang dipenuhi kafe, butik, dan toko-toko mode yang populer di kalangan wisatawan.</h3>
                 </a>
-                <button class="button" onclick="window.location.href='sudirmanstreet.php';">view more</button>
+                <button class="button" onclick="window.location.href='seminyakstreet.php';">view more</button>
             </li>
             <li class="card-item swiper-slide">
-              <a href="https://maps.app.goo.gl/RgL2AVi1E9AV7XiQ8" class="card-link">
-                  <img src="Assets/merdeka.jpg" alt="Merdeka" class="card-image">
-                  <h2 class="card-title">Jl. Merdeka</h2><br>
-                  <h3>Lokasi strategis dengan berbagai pusat perbelanjaan dan dekat dengan Balai Kota Bandung, sering menjadi tempat berkumpulnya warga dan wisatawan.</h3>
+                <a href="https://maps.app.goo.gl/k1YwJhUC8XMjKwVUA" class="card-link">
+                    <img src="Assets/petitenget.jpeg" alt="Petitenget" class="card-image">
+                    <h2 class="card-title">Jl. Petitenget</h2><br>
+                    <h3>Berada di Seminyak, dikenal dengan restoran kelas atas, butik, dan akses ke Pantai Petitenget.</h3>
                 </a>
-                <button class="button" onclick="window.location.href='merdekastreet.php';">view more</button>
+                <button class="button" onclick="window.location.href='petitengetstreet.php';">view more</button>
+            </li>
+            <li class="card-item swiper-slide">
+              <a href="https://maps.app.goo.gl/4yeYbzcsf45B7CJi6" class="card-link">
+                  <img src="Assets/oberoi.jpg" alt="Oberoi" class="card-image">
+                  <h2 class="card-title">Jl. Oberoi (Kayu Aya)</h2><br>
+                  <h3>Terkenal di Seminyak sebagai pusat hiburan malam dan restoran, sering disebut "Eat Street."</h3>
+                </a>
+                <button class="button" onclick="window.location.href='oberoistreet.php';">view more</button>
           </li>
         </ul>
 
@@ -175,16 +178,16 @@ data-aos-delay="200"><span style="color: maroon;">DINA </span>Recommendation</h3
 data-aos-duration="900"
 data-aos-delay="400">
     <div class="image-container">
-     <img alt="Garuda Wisnu Kencana" height="500" src="Assets/bandung recomend.jpg" width="1350"/>
+     <img alt="Garuda Wisnu Kencana" height="500" src="Assets/bandung.jpg" width="1350"/>
      <div class="badge">DINA</div>
      <div class="text-content">
       <h1>This is Bandung</h1>
-      <p>Come to Bandung and got the best experience in Indonesia, Wonderful Indonesia.</p>
-      <a class="tombol" href="tourismbandung.php">The Best Bandung Destination in this Year</a>
+      <p>Come to Badnung and got the best experience in Indonesia, Wonderful Indonesia.</p>
+      <a class="tombol" href="tourism.php">Wisata Bandung terbaik di tahun ini</a>
      </div>
     </div>
    </div>
 
-   <?php
+<?php
 include 'views/footer5.php';
 ?>
