@@ -86,3 +86,20 @@ const blurHeader = () =>{
 }
 window.addEventListener('scroll', blurHeader)
 
+// Tambahkan di main.js atau carousel.js
+var swiper = new Swiper('.popular__carousel', {
+    slidesPerView: 3,
+    spaceBetween: 30,
+    navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+    },
+    loop: true,
+    // responsive breakpoints jika perlu
+    breakpoints: {
+        1024: { slidesPerView: 3 },
+        768: { slidesPerView: 2 },
+        320: { slidesPerView: 1 }
+    }
+});
+

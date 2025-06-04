@@ -1,46 +1,27 @@
 <?php
 session_start();
-include 'dinamemberdb.php'; // Database connection
-$error_message = '';
+include 'db_connection.php';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Capture form data
-    $username = trim($_POST['username']);
-    $password = trim($_POST['password']);
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
 
-    // Prevent SQL Injection
-    $username = mysqli_real_escape_string($conn, $username);
-
-    // Check if the user exists
-    $sql = "SELECT * FROM `users` WHERE (username = '$username' OR email = '$username')";
-    $result = $conn->query($sql);
-
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-
+    $stmt = $conn->prepare("SELECT * FROM users WHERE username=? LIMIT 1");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($row = $result->fetch_assoc()) {
         if (password_verify($password, $row['password'])) {
-            // Set session variables
             $_SESSION['id_user'] = $row['id_user'];
             $_SESSION['username'] = $row['username'];
-            $_SESSION['email'] = $row['email'];
             $_SESSION['role'] = $row['role'];
-
-            // Redirect based on role
-            $role = $row['role']; // Use exact role
-            if ($role === 'admin') {
-                header("Location: dashboard.php");
-                exit();
-            } elseif ($role === 'member') {
-                header("Location: userhomepage.php");
-                exit();
-            } else {
-                $error_message = "Invalid user role.";
-            }
+            header("Location: userhomepage.php");
+            exit();
         } else {
-            $error_message = "Invalid username or password.";
+            $error = "Password salah!";
         }
     } else {
-        $error_message = "No account found with that username or email.";
+        $error = "Username tidak ditemukan!";
     }
 }
 ?>
@@ -119,5 +100,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }, 5000);
         <?php endif; ?>
     </script>
+
+    <!-- Admin Dashboard Link (Visible only to admin) -->
+    <?php if ($_SESSION['role'] === 'admin'): ?>
+        <a href="dashboard.php">Admin Dashboard</a>
+    <?php endif; ?>
 </body>
 </html>
