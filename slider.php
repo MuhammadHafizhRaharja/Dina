@@ -1,4 +1,11 @@
 <?php
+session_start();
+
+if (!isset($_SESSION['id_user'])) {
+    header("Location: Signin.php");
+    exit();
+}
+
 include 'CRUD/reservasi restoran/db.php';
 
 $search  = strtolower(trim($_GET['search'] ?? ''));
@@ -46,7 +53,7 @@ $stmt->close();
 </head>
     
 <?php
-include 'views/header2.php';
+include 'views/header4.php';
 ?>
 
     <!--search bar-->

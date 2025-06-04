@@ -1,4 +1,11 @@
 <?php
+session_start();
+
+if (!isset($_SESSION['id_user'])) {
+    header("Location: Signin.php");
+    exit();
+}
+
 include 'CRUD/reservasi restoran/db.php';
 
 // Ambil keyword pencarian
@@ -45,7 +52,7 @@ if ($result && $result->num_rows > 0) {
         <!--link rating-->
     </head>
     <?php
-    include 'views/header2.php';
+    include 'views/header4.php';
     ?>
 
 

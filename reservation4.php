@@ -75,7 +75,7 @@ if ($checkin && $checkout) {
     <link rel="stylesheet" href="reservation.css">
 </head>
 
-<?php include 'views/header2.php'; ?>
+<?php include 'views/header4.php'; ?>
 
 <section class="checkout py-5" style="background-color: #000; color: white;">
     <div class="container px-4">

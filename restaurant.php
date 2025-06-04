@@ -1,4 +1,11 @@
 <?php
+session_start();
+
+if (!isset($_SESSION['id_user'])) {
+    header("Location: Signin.php");
+    exit();
+}
+
 // Koneksi ke database
 include 'CRUD/reservasi restoran/db.php';
 
@@ -48,7 +55,7 @@ $conn->close();
 </head>
 
 <?php
-include 'views/header2.php';
+include 'views/header4.php';
 ?>
 
     <!--search bar-->
