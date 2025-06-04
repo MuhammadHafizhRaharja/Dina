@@ -1,8 +1,6 @@
 <?php
-$conn = new mysqli("localhost", "root", "", "dina");
-if ($conn->connect_error) {
-    die("Koneksi gagal: " . $conn->connect_error);
-}
+include 'CRUD/reservasi restoran/db.php';
+
 $id_restaurants = $_GET['id_restaurants'] ?? 1;
 ?>
 
