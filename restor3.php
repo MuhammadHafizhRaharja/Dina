@@ -7,9 +7,16 @@ $biaya_per_orang = 100000;
 $pesan_error = "";
 $pesan_sukses = "";
 
+$stmt = $conn->prepare("SELECT name, image FROM restaurants WHERE id_restaurants = ?");
+$stmt->bind_param("i", $id_restaurants);
+$stmt->execute();
+$stmt->bind_result($name, $image);
+$stmt->fetch();
+$stmt->close();
+
 // Cek jika form disubmit
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $nama = $_POST['nama'] ?? '';
+    $nama = $_POST['name'] ?? '';
     $telepon = $_POST['telepon'] ?? '';
     $tanggal = $_POST['tanggal'] ?? '';
     $jam = $_POST['jam'] ?? '';
@@ -75,8 +82,8 @@ include 'views/header2.php';
 
 <div class="container-resto">
     <div class="contact-resto" data-aos="fade-left" data-aos-duration="1500" data-aos-delay="300">
-        <h2>CORK Bali Bistro & Wine</h2>
-        <img alt="Restaurant exterior with tables and chairs" height="200" src="media/restoo1.jpeg" width="300"/>
+        <h2><?= htmlspecialchars($name) ?></h2>
+        <img alt="Restaurant exterior with tables and chairs" height="200" src="<?= htmlspecialchars($image) ?>" width="300"/>
         <div>
             <p style="padding-top: 20px; color: white;"><strong>Location</strong></p>
             <p style="font-size: 14px;">Jl. Danau Tamblingan No.140, Sanur, Denpasar Selatan, Kota Denpasar, Bali 80228</p>

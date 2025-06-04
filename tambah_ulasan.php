@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->close();
 
     // Redirect ke halaman ulasan setelah berhasil menambahkan ulasan
-    header("Location: semua_ulasan.php");
+    header("Location: semua_ulasan.php?id_restaurants=$id_restaurants");
     exit();
 }
 
@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
         <div class="form-group">
             <label for="id_restaurants">ID Restoran:</label>
-            <input type="hidden" name="id_restaurants" value="<?= htmlspecialchars($_GET['id_restaurants'] ?? '') ?>" required>
+            <input type="hidden" name="id_restaurants" value="<?= htmlspecialchars($_GET['id_restaurants'] ?? '') ?>">
         <div class="form-group">
             <label for="rating">Rating:</label>
             <select name="rating" id="rating" required>
