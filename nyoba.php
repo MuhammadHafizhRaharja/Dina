@@ -1,22 +1,39 @@
 <?php
+session_start();
+
+if (!isset($_SESSION['id_user'])) {
+    header("Location: Signin.php");
+    exit();
+}
+
 include 'CRUD/reservasi restoran/db.php';
 
-$id_restaurants = 10;
+$id_restaurants = 1;
 
 $biaya_per_orang = 100000;
 $pesan_error = "";
 $pesan_sukses = "";
 
+$stmt = $conn->prepare("SELECT name, image, location FROM restaurants WHERE id_restaurants = ?");
+$stmt->bind_param("i", $id_restaurants);
+$stmt->execute();
+$stmt->bind_result($name, $image, $location);
+$stmt->fetch();
+$stmt->close();
+
 // Cek jika form disubmit
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $nama = $_POST['nama'] ?? '';
+    $id_user = $_SESSION['id_user'];
+    $nama = $_POST['name'] ?? '';
     $telepon = $_POST['telepon'] ?? '';
     $tanggal = $_POST['tanggal'] ?? '';
     $jam = $_POST['jam'] ?? '';
     $jumlah_orang = intval($_POST['jumlah_orang'] ?? 0);
     $pesan = $_POST['pesan'] ?? '';
     $id_meja = intval($_POST['id_meja'] ?? 0);
-    $id_restaurants = $_POST['id_restaurants'] ?? '';
+    $id_restaurants = $_GET['id_restaurants'] ?? 1;
+    $location = $_POST['location'] ?? '';
+
 
     $total_biaya = $jumlah_orang * $biaya_per_orang;
 
@@ -34,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             // Tidak langsung simpan, redirect ke halaman konfirmasi pembayaran
             header("Location: CRUD/reservasi restoran/detail_pembayaran.php?" .
-                "nama=" . urlencode($nama) .
+                "nama=" . urlencode($username) .
                 "&telepon=" . urlencode($telepon) .
                 "&tanggal=$tanggal" .
                 "&jam=$jam" .
@@ -54,6 +71,9 @@ $meja_list = [];
 while ($row = $meja_query->fetch_assoc()) {
     $meja_list[] = $row;
 }
+
+$username = $_SESSION['username']; // Pastikan username disimpan di session saat login
+
 ?>
 
 <html lang="en">
@@ -67,6 +87,7 @@ while ($row = $meja_query->fetch_assoc()) {
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet"/>
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     <link rel="stylesheet" href="reservasiresto.css">
+</head>
 <body>
 <?php
 include 'views/header2.php';
@@ -74,11 +95,11 @@ include 'views/header2.php';
 
 <div class="container-resto">
     <div class="contact-resto" data-aos="fade-left" data-aos-duration="1500" data-aos-delay="300">
-        <h2>Altitude Grill</h2>
-        <img alt="Restaurant exterior with tables and chairs" height="200" src="media/restob5.jpg" width="300"/>
+        <h2><?= htmlspecialchars($name) ?></h2>
+        <img alt="Restaurant exterior with tables and chairs" height="200" src="<?= htmlspecialchars($image) ?>" width="300"/>
         <div>
             <p style="padding-top: 20px; color: white;"><strong>Location</strong></p>
-            <p style="font-size: 14px;">Ciburial, Kec. Cimenyan, Kabupaten Bandung, Jawa Barat 40198</p>
+            <p style="font-size: 14px;"> <?= htmlspecialchars($location) ?></p>
             <p style="padding-top: 10px; color: white;"><strong> Opening Hours</strong></p>
             <p style="font-size: 14px;">Monday to Sunday</p>
             <p style="font-size: 14px;">08.00 - 22.00</p>
@@ -99,8 +120,7 @@ include 'views/header2.php';
             <?php endif; ?>
 
             <input type="hidden" name="id_restaurants" value="<?php echo $id_restaurants; ?>">
-
-            <input name="nama" placeholder="Full Name" type="text" required />
+            <input name="nama" placeholder="Full Name" type="text" required value="<?= htmlspecialchars($username) ?>" readonly />
             <input name="telepon" placeholder="Phone Number" type="tel" required />
 
             <div style="display: flex; gap: 10px;">
@@ -129,7 +149,7 @@ include 'views/header2.php';
 
             <div class="button-resto">
                 <button type="submit" style="background-color: maroon;">BOOK A TABLE</button>
-                <a href="restaurantBandung.php"><button type="button">Back to Menu</button></a>
+                <a href="restaurant.php"><button type="button">Back to Menu</button></a>
             </div>
         </form>
     </div>
@@ -138,26 +158,6 @@ include 'views/header2.php';
 <div style="border-top: 2px solid maroon; padding-top: 115px; margin-left: 300px; margin-right: 300px;" data-aos="fade-up" data-aos-duration="1500" data-aos-delay="300"></div>
 
 <!-- Review Section -->
-<?php
-// Tambah ulasan
-if (isset($_POST['tambah'])) {
-    $id_user = $_POST['id_user'];
-    $id_restoran = $_POST['id_restoran'];
-    $rating = $_POST['rating'];
-    $komentar = $_POST['komentar'];
-
-    $stmt = $conn->prepare("INSERT INTO ulasan (id_user, id_restoran, rating, komentar) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("iiis", $id_user, $id_restoran, $rating, $komentar);
-    $stmt->execute();
-}
-
-// Hapus ulasan
-if (isset($_GET['hapus'])) {
-    $id_ulasan = $_GET['hapus'];
-    $conn->query("DELETE FROM ulasan WHERE id_ulasan = $id_ulasan");
-}
-?>
-
 <h1 class="review-h1">Ulasan Terbaru</h1>
 <div class="review-container">
     <?php
@@ -165,6 +165,7 @@ if (isset($_GET['hapus'])) {
         SELECT u.*, us.fullname, us.foto_profil 
         FROM ulasan u
         JOIN users us ON u.id_user = us.id_user
+        WHERE u.id_restaurants = $id_restaurants
         ORDER BY u.tanggal DESC
         LIMIT 3
     ");
@@ -192,9 +193,10 @@ if (isset($_GET['hapus'])) {
     <?php endwhile; ?>
 </div>
 
+
 <div class="actions">
-    <a href="semua_ulasan.php" class="btn">See More</a>
-    <a href="tambah_ulasan.php" class="btn">Review</a>
+    <a href="semua_ulasan.php?id_restaurants=<?= $id_restaurants ?>" class="btn">See More</a>
+    <a href="tambah_ulasan.php?id_restaurants=<?= $id_restaurants ?>" class="btn">Review</a>
 </div>
 
 <?php include 'views/footer4.php'; ?>
