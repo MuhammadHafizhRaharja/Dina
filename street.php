@@ -22,20 +22,23 @@ include 'CRUD/reservasi restoran/db.php';
 
 $search  = strtolower(trim($_GET['search'] ?? ''));
 $streets = [];
+$city   = 'Bali';
 
 if ($search === '') {
     $sql  = "SELECT nama_jalan, deskripsi, gambar, link_maps
              FROM dina_streets
+             WHERE LOWER(city) = ?
              ORDER BY nama_jalan ASC";
     $stmt = $conn->prepare($sql);
+    $stmt->bind_param('s', $city);
 } else {
     $sql  = "SELECT nama_jalan, deskripsi, gambar, link_maps
              FROM dina_streets
-             WHERE LOWER(nama_jalan) LIKE ? OR LOWER(deskripsi) LIKE ?
+             WHERE LOWER(city) = ? AND (LOWER(nama_jalan) LIKE ? OR LOWER(deskripsi) LIKE ?)
              ORDER BY nama_jalan ASC";
     $like = "%$search%";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param('ss', $like, $like);
+    $stmt->bind_param('sss', $city, $like, $like);
 }
 
 $stmt->execute();
