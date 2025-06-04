@@ -1,3 +1,10 @@
+<?php
+session_start();
+if (isset($_SESSION['id_user'])) {
+    header("Location: userhomepage.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -274,7 +281,7 @@
             <div class="join__container container grid">
                 <div class="join__data">
                     <h2 class="section__title">
-                        Your Trip With DINA <br> Start Here
+                        Your Trip With DINA <br> Start Here 
                     </h2>
 
                     <p class="join__description">
@@ -282,8 +289,6 @@
                     </p>
 
                     <form action="" class="join__form">
-                        <input type="email" placeholder="Enter your username" class="join__input">
-
                         <a href="Signin.php" class="join__button button">
                             Log In<i class="ri-arrow-right-line"></i>
                         </a>

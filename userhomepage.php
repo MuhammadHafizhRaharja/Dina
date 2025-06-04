@@ -1,9 +1,7 @@
 <?php
-// Start the session to access user data
 session_start();
 
-// Check if the user is logged in (check session variable)
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['id_user'])) { // <-- perbaiki di sini
     header("Location: Signin.php"); // Redirect to login page if not logged in
     exit();
 }
@@ -12,7 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 include 'dinamemberdb.php';
 
 // Retrieve user ID from session
-$user_id = $_SESSION['user_id'];
+$user_id = $_SESSION['id_user']; // <-- perbaiki di sini
 
 // Fetch user details from the database
 $sql = "SELECT * FROM users WHERE id_user = $user_id";
@@ -253,61 +251,59 @@ if ($result->num_rows > 0) {
                 Destinations
             </h2>
 
-            <div class="popular__container container grid">
-                <article class="popular__card">
-                    <div class="popular__image">
-                        <img src="assets/kawahputih.jpg" alt="popular image" class="popular__img">
-                        <div class="popular__shadow"></div>
+            <div class="popular__carousel container swiper" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="300">
+        <div class="card-wrapper">
+            <ul class="card-list swiper-wrapper">
+                <li class="card-item swiper-slide">
+                    <div class="popular__card">
+                        <div class="popular__image">
+                            <img src="assets/kawahputih.jpg" alt="popular image" class="popular__img">
+                            <div class="popular__shadow"></div>
+                        </div>
+                        <h2 class="popular__tittle">Kawah Putih</h2>
+                        <div class="popular__location">
+                            <i class="ri-map-pin-line"></i>
+                            <span>Bandung</span>
+                        </div>
                     </div>
-
-                    <h2 class="popular__tittle">
-                        Kawah Putih
-                    </h2>
-
-                    <div class="popular__location">
-                        <i class="ri-map-pin-line"></i>
-                        <span>Bandung</span>
-                    </div>
-                </article>
-
-                <article class="popular__card">
-
-                    <a href="kuta.php">
+                </li>
+                <li class="card-item swiper-slide">
+                    <a href="kuta.php" class="popular__card">
                         <div class="popular__image">
                             <img src="assets/pantaiKuta.jpg" alt="popular image" class="popular__img">
                             <div class="popular__shadow"></div>
                         </div>
-
-                        <h2 class="popular__tittle">
-                            Kuta Beach
-                        </h2>
+                        <h2 class="popular__tittle">Kuta Beach</h2>
+                        <div class="popular__location">
+                            <i class="ri-map-pin-line"></i>
+                            <span>Bali</span>
+                        </div>
                     </a>
-
-                    <div class="popular__location">
-                        <i class="ri-map-pin-line"></i>
-                        <span>Bali</span>
+                </li>
+                <li class="card-item swiper-slide">
+                    <div class="popular__card">
+                        <div class="popular__image">
+                            <img src="assets/gunungbromo.jpg" alt="popular image" class="popular__img">
+                            <div class="popular__shadow"></div>
+                        </div>
+                        <h2 class="popular__tittle">Mount Bromo</h2>
+                        <div class="popular__location">
+                            <i class="ri-map-pin-line"></i>
+                            <span>Malang</span>
+                        </div>
                     </div>
-                </article>
-
-                <article class="popular__card">
-                    <div class="popular__image">
-                        <img src="assets/gunungbromo.jpg" alt="popular image" class="popular__img">
-                        <div class="popular__shadow"></div>
-                    </div>
-
-                    <h2 class="popular__tittle">
-                        Mount Bromo
-                    </h2>
-
-                    <div class="popular__location">
-                        <i class="ri-map-pin-line"></i>
-                        <span>Malang</span>
-                    </div>
-                </article>
-                <a href="street.php" class="button">
-                    View More <i class="ri-arrow-right-line"></i>
-                </a>
-            </div>
+                </li>
+                <!-- Tambahkan destinasi lain di sini jika perlu -->
+            </ul>
+            <div class="swiper-slide-button swiper-button-prev"></div>
+            <div class="swiper-slide-button swiper-button-next"></div>
+        </div>
+        <div style="margin-top: 20px; text-align: center;">
+            <a href="street.php" class="button">
+                View More <i class="ri-arrow-right-line"></i>
+            </a>
+        </div>
+    </div>
         </section>
 
         <section class="explore section" id="explore">
