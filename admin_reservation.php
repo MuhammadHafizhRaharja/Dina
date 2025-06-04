@@ -81,7 +81,7 @@ $conn->close();
 
           <div class="card-footer">
             <!-- Edit Reservation Link -->
-            <a href="update_reservation.php?id=<?= $row['id_reservasi'] ?>" class="btn-edit">Edit</a>
+            <a href="update_reservation.php?id=<?= $row['id_reservasi'] ?>" class="btn-back-to-dashboard">Edit</a>
 
             <!-- Delete Reservation -->
             <form method="POST" style="display:inline-block;">
