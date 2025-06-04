@@ -333,7 +333,7 @@ body {
    border: 6px solid transparent;
    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.05);
    transition: 0.2s ease;
-   height: 400px;
+   height: 300px;
 }
 
 .card-list .card-item .card-link:active {
@@ -369,6 +369,9 @@ body {
    font-size: 1.19rem;
    color: #000;
    font-weight: 600;
+}
+.card-title{
+    margin-left: 25px;
 }
 
 .card-list .card-link .card-button {
@@ -412,6 +415,9 @@ body {
    justify-content: start;
    align-content: end;
    position: fixed;
+}
+.card-paragraph {
+    color: #000;
 }
 .footer{
    color: #fff;

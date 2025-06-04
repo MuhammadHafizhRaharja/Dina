@@ -26,12 +26,13 @@ $wisata = [];
 if ($search === '') {
     $sql  = "SELECT nama_wisata, deskripsi, foto_profil, link_maps, link_detail
              FROM wisata
+             WHERE LOWER(city) = 'bali'
              ORDER BY nama_wisata ASC";
     $stmt = $conn->prepare($sql);
 } else {
     $sql  = "SELECT nama_wisata, deskripsi, foto_profil, link_maps, link_detail
              FROM wisata
-             WHERE LOWER(nama_wisata) LIKE ? OR LOWER(deskripsi) LIKE ?
+             WHERE LOWER(city) = 'bali' AND (LOWER(nama_wisata) LIKE ? OR LOWER(deskripsi) LIKE ?)
              ORDER BY nama_wisata ASC";
     $like = "%$search%";
     $stmt = $conn->prepare($sql);
@@ -116,53 +117,6 @@ if ($resTop && $resTop -> num_rows > 0) {
                     </li>
                     <?php endforeach; ?>
         </ul>
-        <div class="swiper-pagination"></div>
-    </div>
-</div>
-
-<!--Content2-->
-<h2 class="title" data-aos="fade-up"><Span style="color: maroon;">Discover </Span>Bali</h2>
-<div class="container swiper" data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
-    <div class="card-wrapper">
-        <ul class="card-list swiper-wrapper">
-            <li class="card-item swiper-slide">
-                <a href="tirtaempultourism.php" class="card-link">
-                    <img src="Assets/tirta empul.jpg" alt="Tirta empul" class="card-image">
-                    <h2 class="card-title">Tirta Empul</h2><br>
-                    <h3>Pura suci dengan kolam pemandian alami yang digunakan untuk ritual pembersihan spiritual.</h3>
-                </a>
-            </li>
-            <li class="card-item swiper-slide">
-                <a href="jimbarantourism.php" class="card-link">
-                    <img src="Assets/jimbaran.jpg" alt="Jimbaran" class="card-image">
-                    <h2 class="card-title">Pantai Jimbaran</h2><br>
-                    <h3>Terkenal dengan restoran seafood di tepi pantai, ideal untuk makan malam romantis saat matahari terbenam.</h3>
-                </a>
-            </li>
-            <li class="card-item swiper-slide">
-                <a href="penidatourism.php" class="card-link">
-                    <img src="Assets/nusa penida.jpg" alt="Nusa Penida" class="card-image">
-                    <h2 class="card-title">Nusa Penida</h2><br>
-                    <h3>Pulau di lepas pantai Bali yang populer dengan tebing dan pantai indah seperti Kelingking Beach dan Angel’s Billabong.</h3>
-                </a>
-            </li>
-            <li class="card-item swiper-slide">
-                <a href="sanurtourism.php" class="card-link">
-                    <img src="Assets/sanur.jpg" alt="sanur" class="card-image">
-                    <h2 class="card-title">Pantai Sanur</h2><br>
-                    <h3>Pantai yang lebih tenang dengan air yang jernih, cocok untuk berjalan-jalan santai, snorkeling, dan menikmati matahari terbit.</h3>
-                </a>
-            </li>
-            <li class="card-item swiper-slide">
-              <a href="sekumpultourism.php" class="card-link">
-                  <img src="Assets/sekumpul.jpg" alt="Sekumpul Waterfall" class="card-image">
-                  <h2 class="card-title">Sekumpul Waterfall</h2><br>
-                  <h3>Air terjun yang terletak di daerah utara Bali, dikenal sebagai salah satu air terjun paling indah di Bali.</h3>
-              </a>
-          </li>
-        </ul>
-
-
         <div class="swiper-pagination"></div>
     </div>
 </div>

@@ -69,7 +69,7 @@ include 'views/header4.php';
             <div class="nav-item"><a href="hotelBandung.php" class="material-symbols-outlined">hotel <p>Hotel</p></a></div>
             <div class="nav-item"><a href="mallBandung.php" class="material-symbols-outlined">local_mall <p>Shopping Place</p></a></div>
             <div class="nav-item on"><a href="restaurantBandung.php" class="material-symbols-outlined">restaurant <p>Restaurant</p></a></div>
-            <div class="nav-item"><a href="tourism.php" class="material-symbols-outlined">explore <p>Tourism</p></a></div>
+            <div class="nav-item"><a href="tourismbandung.php" class="material-symbols-outlined">explore <p>Tourism</p></a></div>
         </div>
         <div class="">
         <form method="GET" class="search-bar">

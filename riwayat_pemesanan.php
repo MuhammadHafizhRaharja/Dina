@@ -66,7 +66,7 @@ $stmt->close();
     <?php endif; ?>
 
     <div class="actions">
-        <a href="tourism.php" class="btn">Pesan Tiket Baru</a>
+        <a href="userhomepage.php" class="btn">Pesan Tiket Baru</a>
     </div>
 </body>
 </html>

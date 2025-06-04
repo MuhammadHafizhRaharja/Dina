@@ -61,13 +61,13 @@ include 'views/header1.php';
     </div>
 
     <div class="nav-search" data-aos="fade-down" data-aos-duration="900" data-aos-delay="400">
-        <div class="nav-item on"><a href="street.php" class="material-symbols-outlined">explore_nearby<p>Place To Go</p></a></div>
-        <div class="nav-item"><a href="slider.php" class="material-symbols-outlined">hotel <p>Hotel</p></a></div>
-        <div class="nav-item"><a href="mall.php" class="material-symbols-outlined">local_mall <p>Shopping Place</p></a></div>
-        <div class="nav-item"><a href="restaurant.php" class="material-symbols-outlined">restaurant <p>Restaurant</p></a></div>
-        <div class="nav-item"><a href="tourism.php" class="material-symbols-outlined">explore <p>Tourism</p></a></div>
+        <div class="nav-item on"><a href="streetbandung.php" class="material-symbols-outlined">explore_nearby<p>Place To Go</p></a></div>
+        <div class="nav-item"><a href="hotelBandung.php" class="material-symbols-outlined">hotel <p>Hotel</p></a></div>
+        <div class="nav-item"><a href="mallBandung.php" class="material-symbols-outlined">local_mall <p>Shopping Place</p></a></div>
+        <div class="nav-item"><a href="restaurantBandung.php" class="material-symbols-outlined">restaurant <p>Restaurant</p></a></div>
+        <div class="nav-item"><a href="tourismBandung.php" class="material-symbols-outlined">explore <p>Tourism</p></a></div>
     </div>
-    <form class="search-bar" method="get" action="street.php">
+    <form class="search-bar" method="get" action="streetbandung.php">
             <i class="fas fa-search"></i>
             <input type="text" name="search"
                 value="<?= htmlspecialchars($search) ?>" placeholder="Search streets in Bandung...">
@@ -103,73 +103,6 @@ include 'views/header1.php';
     </div>
 </div>
 
-
-<!--Content2-->
-<h2 class="title"data-aos="fade-up"
-data-aos-duration="500"
-data-aos-delay="100"><Span style="color:maroon;">Bandung </Span>on The Way</h2>
-<div class="container swiper" data-aos="fade-up"
-data-aos-duration="900"
-data-aos-delay="400">
-    <div class="card-wrapper">
-        <ul class="card-list swiper-wrapper">
-            <li class="card-item swiper-slide">
-                <a href="https://maps.app.goo.gl/LTqPn7xJHbLBXgGv7" class="card-link">
-                    <img src="Assets/legian.jpg" alt="Legian" class="card-image">
-                    <h2 class="card-title">Jl. Legian</h2><br>
-                    <h3>Terletak di Kuta, terkenal dengan kehidupan malam, klub, restoran, dan area perbelanjaan.</h3>
-                </a>
-                <button class="button" onclick="window.location.href='legianstreet.php';">view more</button>
-            </li>
-            <li class="card-item swiper-slide">
-                <a href="https://maps.app.goo.gl/ELNrw4b3YfVnaUtX8" class="card-link">
-                    <img src="Assets/raya ubud.jpg" alt="Raya Ubud" class="card-image">
-                    <h2 class="card-title">Jl. Raya Ubud</h2><br>
-                    <h3>Jalan utama di Ubud yang dipenuhi galeri seni, kafe, dan toko kerajinan, menarik wisatawan lokal dan mancanegara.</h3>
-                </a>
-                <button class="button" onclick="window.location.href='rayaubudstreet.php';">view more</button>
-            </li>
-            <li class="card-item swiper-slide">
-                <a href="https://maps.app.goo.gl/RANysebgAFZANmxh7" class="card-link">
-                    <img src="Assets/sunset road.jpg" alt="Sunset Road" class="card-image">
-                    <h2 class="card-title">Jl. Sunset Road</h2><br>
-                    <h3>Jalan besar di Kuta yang menghubungkan daerah wisata utama seperti Seminyak dan Legian, dipenuhi hotel dan restoran.</h3>
-                </a>
-                <button class="button" onclick="window.location.href='sunsetroadstreet.php';">view more</button>
-            </li>
-            <li class="card-item swiper-slide">
-                <a href="https://maps.app.goo.gl/z6qCHDeaopgH9cdSA" class="card-link">
-                    <img src="Assets/raya seminyak.jpg" alt="Raya Seminyak" class="card-image">
-                    <h2 class="card-title">Jl. Raya Seminyak</h2><br>
-                    <h3>Jalan utama di Seminyak yang dipenuhi kafe, butik, dan toko-toko mode yang populer di kalangan wisatawan.</h3>
-                </a>
-                <button class="button" onclick="window.location.href='seminyakstreet.php';">view more</button>
-            </li>
-            <li class="card-item swiper-slide">
-                <a href="https://maps.app.goo.gl/k1YwJhUC8XMjKwVUA" class="card-link">
-                    <img src="Assets/petitenget.jpeg" alt="Petitenget" class="card-image">
-                    <h2 class="card-title">Jl. Petitenget</h2><br>
-                    <h3>Berada di Seminyak, dikenal dengan restoran kelas atas, butik, dan akses ke Pantai Petitenget.</h3>
-                </a>
-                <button class="button" onclick="window.location.href='petitengetstreet.php';">view more</button>
-            </li>
-            <li class="card-item swiper-slide">
-              <a href="https://maps.app.goo.gl/4yeYbzcsf45B7CJi6" class="card-link">
-                  <img src="Assets/oberoi.jpg" alt="Oberoi" class="card-image">
-                  <h2 class="card-title">Jl. Oberoi (Kayu Aya)</h2><br>
-                  <h3>Terkenal di Seminyak sebagai pusat hiburan malam dan restoran, sering disebut "Eat Street."</h3>
-                </a>
-                <button class="button" onclick="window.location.href='oberoistreet.php';">view more</button>
-          </li>
-        </ul>
-
-
-        <div class="swiper-pagination"></div>
-        <div class="swiper-slide-button swiper-button-prev"></div>
-        <div class="swiper-slide-button swiper-button-next"></div>
-    </div>
-</div>
-
 <!--Recommendation-->
 <h3 class="title" data-aos="fade-up"
 data-aos-duration="600"
@@ -178,12 +111,12 @@ data-aos-delay="200"><span style="color: maroon;">DINA </span>Recommendation</h3
 data-aos-duration="900"
 data-aos-delay="400">
     <div class="image-container">
-     <img alt="Garuda Wisnu Kencana" height="500" src="Assets/bandung.jpg" width="1350"/>
+     <img alt="Bandung" height="500" src="Assets/bandung recomend.jpg" width="1350"/>
      <div class="badge">DINA</div>
      <div class="text-content">
       <h1>This is Bandung</h1>
       <p>Come to Badnung and got the best experience in Indonesia, Wonderful Indonesia.</p>
-      <a class="tombol" href="tourism.php">Wisata Bandung terbaik di tahun ini</a>
+      <a class="tombol" href="tourismbandung.php">Wisata Bandung terbaik di tahun ini</a>
      </div>
     </div>
    </div>

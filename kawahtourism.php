@@ -1,81 +1,166 @@
-<html>
-<head>
-    <title>Kawah Putih, Bandung</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <!--link font google-->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=arrow_forward" />
-    <!--link swiper css-->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
-    <!--link rating-->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link rel="stylesheet" href="detailtourism.css">
-    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
-    <link rel="icon" type="logoshape/png" href="Assets/logoerase.png">
-</head>
-
-<body>
-
 <?php
-include 'header1.php';
-?>
+include 'views/header1.php';
+session_start();
 
-    <!--Content-->
+if (!isset($_SESSION['id_user'])) {
+    header("Location: Signin.php");
+    exit();
+}
+
+include 'db_connection.php';
+
+// Fetch the tourist site details
+$id_wisata = 7; // Replace with dynamic ID, e.g., from URL parameter
+$sql = "SELECT * FROM wisata WHERE id_wisata = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $id_wisata);
+$stmt->execute();
+$wisata = $stmt->get_result()->fetch_assoc();
+$stmt->close();
+
+$username = $_SESSION['username']; // Pastikan username disimpan di session saat login
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $id_user = $_SESSION['id_user'];
+    $tanggal = $_POST['tanggal'];
+    $jumlah_tiket = $_POST['jumlah_tiket'];
+    $total_harga = $jumlah_tiket * $wisata['harga']; //Menghitung total
+
+    $stmt = $conn->prepare("INSERT INTO pemesanan_tiket (id_user, id_wisata, tanggal, jumlah_tiket, total_harga) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param("iisid", $id_user, $id_wisata, $tanggal, $jumlah_tiket, $total_harga);
+    $stmt->execute();
+    $stmt->close();
+
+    header("Location: konfirmasi_pemesanan.php"); // Redirect to confirmation page
+    exit();
+}
+    $ulasan = $conn->query("
+    SELECT uw.*, u.fullname, u.foto_profil
+    FROM ulasan_wisata uw
+    JOIN users u ON uw.id_user = u.id_user
+    WHERE uw.id_wisata = $id_wisata
+    ORDER BY uw.tanggal DESC
+    LIMIT 3
+    ");
+?>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title><?= htmlspecialchars($wisata['nama_wisata']) ?> - Bali</title>
+    <link rel="stylesheet" href="detailtourism.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="icon" type="logotype/png" href="Assets/logoerase.png">
+</head>
+<body>
     <div class="gallery" data-aos="fade-down" data-aos-duration="600" data-aos-delay="100">
         <div class="main-photo">
-            <img src="Assets/kawahputihtourism.jpg" height="300" width="2000">
+            <img src="<?= htmlspecialchars($wisata['foto_profil']) ?>" height="300" width="100%">
             <div class="overlay">
-                <h1>Kawah Putih</h1>
-            </div>
-        </div>
-
-    <div class="container" data-aos="fade-up" data-aos-duration="900" data-aos-delay="500">
-        <div class="content">
-            <h1>About</h1>
-            <p>Kawah Putih in Ciwidey is another must-see destination. Famous for its strikingly 
-                beautiful turquoise-colored crater lake, this area attracts photographers and nature 
-                enthusiasts alike. The eerie beauty of the place, set against a backdrop of mist and 
-                cool weather, makes it an ideal location for those looking to immerse themselves in 
-                the surreal landscape of Bandung.</p>
-            • <a href="#">Lowest price guarantee</a> • <a href="#">Reserve now & pay later</a> • <a href="#">Free cancellation</a>
-            <div class="details">
-                <div><i class="fas fa-user"></i> All ages</div>
-                <div><i class="fas fa-clock"></i> 10-15 minutes from Ngurah Rai international Ariport</div>
-                <div><i class="fas fa-calendar-alt"></i> Start time: Check availability</div>
-                <div><i class="fas fa-mobile-alt"></i> Mobile ticket: Available</div>
-                <div><i class="fas fa-language"></i> Live guide: English</div>
-            </div>
-        </div>
-        <div class="sidebar">
-            <h2>From Rp.120.000,00</h2>
-            <p class="price">price per person</p>
-            <p style="color: maroon;">Get your calendar to Explore</p>
-            <div class="date-picker">
-                <i class="fas fa-calendar-alt"></i>
-                <input type="date" >
-            </div>
-            <p class="price" style="color: maroon;">Number of Person</p>
-            <div class="traveler-picker">
-                <i class="fas fa-user-friends"></i>
-                <input type="number" value="2">
-            </div>
-            <div class="option">
-                <h3>Private Guided Sightseeing Day Tour of Bandung</h3>
-                <p>Pickup included</p>
-                <p>2 Adults x Rp.120.000,00</p>
-                <p>Total Rp.240.000,00</p>
-                <p>(Price includes taxes and booking fees)</p>
-            </div>
-            <button class="reserve-btn">Reserve Now</button>
-            <div class="free-cancellation">
-                <i class="fas fa-check-circle"></i>
-                <p>Free cancellation. Cancel anytime before Dec 6 for full refund.</p>
+                <h1><?= htmlspecialchars($wisata['nama_wisata']) ?></h1>
             </div>
         </div>
     </div>
 
+    <div class="container" data-aos="fade-up" data-aos-duration="900" data-aos-delay="500">
+        <div class="content">
+            <h1>About</h1>
+            <p><?= htmlspecialchars($wisata['deskripsi']) ?></p>
+            <div class="details">
+                <div><i class="fas fa-map-marker-alt"></i> <?= htmlspecialchars($wisata['city']) ?></div>
+                <div><i class="fas fa-calendar-alt"></i> Start time: Check availability</div>
+                <div><i class="fas fa-mobile-alt"></i> Mobile ticket: Available</div>
+            </div>
+        </div>
+        <div class="sidebar">
+            <h2>From Rp.<?= number_format($wisata['harga'], 0, ',', '.') ?></h2>
+            <p class="price">price per person</p>
+            <p style="color: maroon;">Get your calendar to Explore</p>
+            <form method="POST">
+                <div class="user-info" style="margin-top:1rem;">
+                    <strong>Username:</strong> <?= htmlspecialchars($username) ?><br>
+                </div>
+                <div class="date-picker">
+                    <i class="fas fa-calendar-alt"></i>
+                    <input type="date" name="tanggal" required>
+                </div>
+                <p class="price" style="color: maroon;">How many tickets</p>
+                <div class="traveler-picker">
+                    <i class="fas fa-user-friends"></i>
+                    <input id="jumlah_tiket" type="number" name="jumlah_tiket" min="1" value="1" required>
+                </div>
+                <div class="traveler-picker" style="color: maroon;">
+                 <strong>Total Harga: </strong>
+                 <span id="total_harga">Rp.<?= number_format($wisata['harga'], 0, ',', '.') ?></span>
+                </div>
+                <button type="submit" class="reserve-btn">Reserve Now</button>
+            </form>
+            <div class="free-cancellation">
+                <i class="fas fa-check-circle"></i>
+                <p>Free cancellation. Cancel anytime before your visit for full refund.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="actions">
+        <a href="riwayat_pemesanan.php" class="btn">Lihat Riwayat Pemesanan</a>
+    </div>
+
+   <h1 class="review-h1">Ulasan Pengunjung</h1>
+   <div class="review-container">
+    <?php
+    $ulasan = $conn->query("
+        SELECT uw.*, us.fullname, us.foto_profil 
+        FROM ulasan_wisata uw
+        JOIN users us ON uw.id_user = us.id_user
+        WHERE uw.id_wisata = $id_wisata
+        ORDER BY uw.tanggal DESC
+        LIMIT 3
+    ");
+    while ($row = $ulasan->fetch_assoc()):
+    ?>
+    <div class="review-card">
+        <div class="review-header">
+            <div class="stars">
+                <?php
+                $rating = (int)($row['rating'] ?? 0);
+                for ($i = 1; $i <= 5; $i++): ?>
+                    <i class="fas fa-star <?= ($i <= $rating) ? '' : 'inactive' ?>"></i>
+                <?php endfor; ?>
+            </div>
+        </div>
+        <div class="review-content">
+            <?= htmlspecialchars($row['komentar']) ?>
+        </div>
+        <div class="review-footer">
+            <img src="<?= $row['foto_profil'] ?>" width="40" height="40" alt="Foto profil">
+            <div class="username"><?= $row['fullname'] ?></div>
+            <div class="date"><?= date('d M Y', strtotime($row['tanggal'])) ?></div>
+        </div>
+    </div>
+    <?php endwhile; ?>
+</div>
+    <div class="actions">
+        <a href="semua_ulasan_wisata.php?id_wisata=<?= $id_wisata ?>" class="btn">Lihat Semua Ulasan</a>
+        <a href="tambah_ulasan_wisata.php?id_wisata=<?= $id_wisata ?>" class="btn">Tambah Ulasan</a>
+    </div>
+
+</body>
+</html>
     <?php
 include 'views/footer1.php';
 ?>
+<script>
+    const harga = <?= (int)$wisata['harga'] ?>;
+    const jumlahTiket = document.getElementById('jumlah_tiket');
+    const totalHarga = document.getElementById('total_harga');
+
+    function updateTotalHarga() {
+        const qty = parseInt(jumlahTiket.value) || 1;
+        const total = harga * qty;
+        totalHarga.textContent = 'Rp.' + total.toLocaleString('id-ID');
+    }
+
+    jumlahTiket.addEventListener('input', updateTotalHarga);
+    window.addEventListener('DOMContentLoaded', updateTotalHarga);
+</script>
