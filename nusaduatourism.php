@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id_user = $_SESSION['id_user'];
     $tanggal = $_POST['tanggal'];
     $jumlah_tiket = $_POST['jumlah_tiket'];
-    $total_harga = $jumlah_tiket * $wisata['harga']; //Menghitung total
+    $total_harga = $jumlah_tiket * $wisata['harga']; //ngitung total
 
     $stmt = $conn->prepare("INSERT INTO pemesanan_tiket (id_user, id_wisata, tanggal, jumlah_tiket, total_harga) VALUES (?, ?, ?, ?, ?)");
     $stmt->bind_param("iisid", $id_user, $id_wisata, $tanggal, $jumlah_tiket, $total_harga);

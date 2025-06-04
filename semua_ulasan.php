@@ -3,6 +3,7 @@ $conn = new mysqli("localhost", "root", "", "dina");
 if ($conn->connect_error) {
     die("Koneksi gagal: " . $conn->connect_error);
 }
+$id_restaurants = $_GET['id_restaurants'] ?? 1;
 ?>
 
 <!DOCTYPE html>
@@ -23,6 +24,7 @@ if ($conn->connect_error) {
             SELECT u.*, us.fullname, us.foto_profil 
             FROM ulasan u
             JOIN users us ON u.id_user = us.id_user
+            WHERE u.id_restaurants = $id_restaurants
             ORDER BY u.tanggal DESC
         ");
         
@@ -69,7 +71,7 @@ if ($conn->connect_error) {
     </div>
 
     <div class="actions">
-        <a href="restor1.php" class="btn">← Kembali</a>
+        <a href="restor1.php?id_restaurants=<?= $id_restaurants ?>" class="btn">← Kembali</a>
     </div>
 </body>
 </html>

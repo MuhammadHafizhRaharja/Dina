@@ -1,8 +1,7 @@
 <?php
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
-?>
-<?php
+
 session_start(); // Mulai sesi
 
 
@@ -22,12 +21,13 @@ if ($conn->connect_error) {
 // Menyimpan ulasan ke dalam tabel ulasan
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id_user = $_SESSION['id_user']; // Ambil id_user dari session
+    $id_restaurants = $_POST['id_restaurants']; // Ambil id_restaurants dari form
     $rating = $_POST['rating'];
     $komentar = $_POST['komentar'];
 
     // Menyimpan ulasan ke dalam tabel ulasan
-    $stmt = $conn->prepare("INSERT INTO ulasan (id_user, komentar, rating) VALUES (?, ?, ?)");
-    $stmt->bind_param("isi", $id_user, $komentar, $rating); // id_user, komentar, rating
+    $stmt = $conn->prepare("INSERT INTO ulasan (id_user, id_restaurants, komentar, rating) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("iisi", $id_user, $id_restaurants, $komentar, $rating); // id_user, id_restaurants, komentar, rating
     $stmt->execute();
     $stmt->close();
 
@@ -54,7 +54,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <label for="username">Username:</label>
             <input type="text" name="username" id="username" value="<?= $_SESSION['username'] ?>" readonly>
         </div>
-
+        <div class="form-group">
+            <label for="id_restaurants">ID Restoran:</label>
+            <input type="hidden" name="id_restaurants" value="<?= htmlspecialchars($_GET['id_restaurants'] ?? '') ?>" required>
         <div class="form-group">
             <label for="rating">Rating:</label>
             <select name="rating" id="rating" required>

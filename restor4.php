@@ -16,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $jumlah_orang = intval($_POST['jumlah_orang'] ?? 0);
     $pesan = $_POST['pesan'] ?? '';
     $id_meja = intval($_POST['id_meja'] ?? 0);
-    $id_restaurants = $_POST['id_restaurants'] ?? '';
+    $id_restaurants = $_GET['id_restaurants'] ?? 1;
 
     $total_biaya = $jumlah_orang * $biaya_per_orang;
 
@@ -67,6 +67,7 @@ while ($row = $meja_query->fetch_assoc()) {
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet"/>
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     <link rel="stylesheet" href="reservasiresto.css">
+</head>
 <body>
 <?php
 include 'views/header2.php';
@@ -74,11 +75,11 @@ include 'views/header2.php';
 
 <div class="container-resto">
     <div class="contact-resto" data-aos="fade-left" data-aos-duration="1500" data-aos-delay="300">
-        <h2>Yema Kitchen Bali </h2>
-        <img alt="Restaurant exterior with tables and chairs" height="200" src="media/restoo4.jpeg" width="300"/>
+        <h2>CORK Bali Bistro & Wine</h2>
+        <img alt="Restaurant exterior with tables and chairs" height="200" src="media/restoo1.jpeg" width="300"/>
         <div>
             <p style="padding-top: 20px; color: white;"><strong>Location</strong></p>
-            <p style="font-size: 14px;">Jl. Tanah Barak No.31, Canggu, Kec. Kuta Utara, Kabupaten Badung, Bali 80351</p>
+            <p style="font-size: 14px;">Jl. Danau Tamblingan No.140, Sanur, Denpasar Selatan, Kota Denpasar, Bali 80228</p>
             <p style="padding-top: 10px; color: white;"><strong> Opening Hours</strong></p>
             <p style="font-size: 14px;">Monday to Sunday</p>
             <p style="font-size: 14px;">08.00 - 22.00</p>
@@ -138,26 +139,6 @@ include 'views/header2.php';
 <div style="border-top: 2px solid maroon; padding-top: 115px; margin-left: 300px; margin-right: 300px;" data-aos="fade-up" data-aos-duration="1500" data-aos-delay="300"></div>
 
 <!-- Review Section -->
-<?php
-// Tambah ulasan
-if (isset($_POST['tambah'])) {
-    $id_user = $_POST['id_user'];
-    $id_restoran = $_POST['id_restoran'];
-    $rating = $_POST['rating'];
-    $komentar = $_POST['komentar'];
-
-    $stmt = $conn->prepare("INSERT INTO ulasan (id_user, id_restoran, rating, komentar) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("iiis", $id_user, $id_restoran, $rating, $komentar);
-    $stmt->execute();
-}
-
-// Hapus ulasan
-if (isset($_GET['hapus'])) {
-    $id_ulasan = $_GET['hapus'];
-    $conn->query("DELETE FROM ulasan WHERE id_ulasan = $id_ulasan");
-}
-?>
-
 <h1 class="review-h1">Ulasan Terbaru</h1>
 <div class="review-container">
     <?php
@@ -165,6 +146,7 @@ if (isset($_GET['hapus'])) {
         SELECT u.*, us.fullname, us.foto_profil 
         FROM ulasan u
         JOIN users us ON u.id_user = us.id_user
+        WHERE u.id_restaurants = $id_restaurants
         ORDER BY u.tanggal DESC
         LIMIT 3
     ");
@@ -192,9 +174,10 @@ if (isset($_GET['hapus'])) {
     <?php endwhile; ?>
 </div>
 
+
 <div class="actions">
-    <a href="semua_ulasan.php" class="btn">See More</a>
-    <a href="tambah_ulasan.php" class="btn">Review</a>
+    <a href="semua_ulasan.php?id_restaurants=<?= $id_restaurants ?>" class="btn">See More</a>
+    <a href="tambah_ulasan.php?id_restaurants=<?= $id_restaurants ?>" class="btn">Review</a>
 </div>
 
 <?php include 'views/footer4.php'; ?>
