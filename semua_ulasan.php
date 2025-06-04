@@ -70,7 +70,7 @@ $id_restaurants = $_GET['id_restaurants'] ?? 1;
 
     
     <div class="actions">
-        <a href="restor<?= $id_restaurants ?>.php?id_restaurants=<?= $id_restaurants ?>" class="btn">← Kembali</a>
+        <a href="userhomepage.php" class="btn">← Kembali</a>
     </div>
 
 </body>

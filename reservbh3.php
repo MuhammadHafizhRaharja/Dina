@@ -75,7 +75,7 @@ if ($checkin && $checkout) {
     <link rel="stylesheet" href="reservation.css">
 </head>
 
-<?php include 'views/header2.php'; ?>
+<?php include 'views/header4.php'; ?>
 
 <section class="checkout py-5" style="background-color: #000; color: white;">
     <div class="container px-4">
@@ -129,72 +129,58 @@ if ($checkin && $checkout) {
 </section>
 
 <!--Review-->
-    <div class="reviews-container" data-aos="fade-down" data-aos-duration="1200" data-aos-delay="300">
-        <div class="review-card" >
-            <div class="review-header">
-                <div class="stars">
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                </div>
-            </div>
-
-            <div class="review-content">
-                Hotel ini sangat memuaskan. Kamar bersih, pelayanan ramah, fasilitas lengkap, dan sarapan lezat. Lokasi strategis memudahkan akses ke berbagai tempat wisata.
-            </div>
-
-            <div class="review-footer">
-                <img alt="Profile picture of @R450GCarnauld" height="40" src="about us/images/Foto apis.jpg" width="40"/>
-                    <div class="username">apis@gmail.com</div>
-                    <div class="date">3 bulan lalu</div>
-            </div>
-        </div>
-
-        <div class="review-card">
-            <div class="review-header">
-                <div class="stars">
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                </div>
-             </div>
-
-            <div class="review-content">
-                Lokasi hotel sangat strategis, dekat tempat wisata. Pelayanan staf sangat profesional, kamar selalu bersih dan nyaman, serta suasana hotel tenang. Ingin kembali lagi
-            </div>
-
-            <div class="review-footer">
-                <img alt="Profile picture of @846rapha_lm" height="40" src="about us/images/darren2.jpg" width="40"/>
-                    <div class="username">daren@gmail.com</div>
-                    <div class="date">3 bulan lalu</div>
+<h1 class="review-h1">Ulasan Terbaru</h1>
+<div class="reviews-container" data-aos="fade-down" data-aos-duration="1200" data-aos-delay="300">
+    <?php
+    $ulasan = $conn->query("
+        SELECT uh.*, u.fullname, u.foto_profil 
+        FROM ulasan_hotel uh
+        JOIN users u ON uh.id_user = u.id_user
+        WHERE uh.id_hotel = $hotel_id
+        ORDER BY uh.tanggal DESC
+        LIMIT 3
+    ");
+    while ($row = $ulasan->fetch_assoc()):
+    ?>
+    <div class="review-card">
+        <div class="review-header">
+            <div class="stars">
+                <?php 
+                $rating = (int)($row['rating'] ?? 0);
+                for ($i = 1; $i <= 5; $i++): ?>
+                    <i class="fas fa-star <?= $i <= $rating ? '' : 'inactive' ?>"></i>
+                <?php endfor; ?>
             </div>
         </div>
-
-        <div class="review-card">
-            <div class="review-header">
-                <div class="stars">
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
+        <div class="review-content">
+            <?= htmlspecialchars($row['komentar']) ?>
+        </div>
+        <div class="review-footer">
+            <img src="<?= $row['foto_profil'] ?>" width="40" height="40" alt="Foto profil">
+            <div class="username"><?= $row['fullname'] ?></div>
+            <div class="date"><?= date('d M Y', strtotime($row['tanggal'])) ?></div>
+        </div>
+        
+        <div class="review-replies">
+            <?php
+            $balasan = $conn->query("SELECT bh.*, u.fullname FROM balasan_ulasan_hotel bh
+                                     JOIN users u ON bh.id_user = u.id_user
+                                     WHERE bh.id_ulasan = " . $row['id_ulasan']);
+            while ($balas = $balasan->fetch_assoc()):
+            ?>
+                <div class="reply">
+                    <strong><?= $balas['fullname'] ?></strong>: <?= htmlspecialchars($balas['komentar']) ?>
+                    <div class="reply-date"><?= date('d M Y', strtotime($balas['tanggal'])) ?></div>
                 </div>
-            </div>
-
-            <div class="review-content">
-                Pengalaman menginap yang menyenangkan. Kamar nyaman dengan pemandangan indah. Wi-Fi stabil, kolam renang bersih. Sangat direkomendasikan!
-            </div>
-
-            <div class="review-footer">
-                <img alt="Profile picture of @R450GCarnauld" height="40" src="about us/images/dwiki.jpg" width="40"/>
-                    <div class="username">afdikk@gmail.com</div>
-                    <div class="date">3 bulan lalu</div>
-            </div>
+            <?php endwhile; ?>
         </div>
     </div>
+    <?php endwhile; ?>
+</div>
+<div class="actions">
+    <a href="semua_ulasan_hotel.php?id_hotel=<?= $hotel_id ?>" class="btn">See More</a>
+    <a href="tambah_ulasan_hotel.php?id_hotel=<?= $hotel_id ?>" class="btn">Review</a>
+</div>
+   
 
 <?php include 'views/footer3.php'; ?>
