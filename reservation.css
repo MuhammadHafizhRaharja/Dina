@@ -167,6 +167,12 @@ input.form-control,
   }
 
   /* Review */
+  .review-h1{
+    font-size: 35px;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #fff;
+ }
   .reviews-container {
     display: flex;
     flex-wrap: wrap;
@@ -223,6 +229,33 @@ input.form-control,
     font-size: 14px;
     color: #333;
     margin-left: auto;
+}
+.username {
+    font-weight: bold;
+}
+
+.date {
+    font-size: 0.9em;
+    color: #777;
+}
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px; 
+    margin-top: 5px;
+    margin-right: 140px; 
+}
+.stars .inactive{
+    color: #666;
+}
+
+.btn {
+    padding: 8px 16px;
+    margin-right: 10px;
+    background-color: maroon;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
 }
 @media (max-width: 768px) {
     .reviews-container {
