@@ -10,10 +10,10 @@ if (!isset($_SESSION['id_user'])) { // <-- perbaiki di sini
 include 'dinamemberdb.php';
 
 // Retrieve user ID from session
-$user_id = $_SESSION['id_user']; // <-- perbaiki di sini
+$id_user = $_SESSION['id_user']; // <-- perbaiki di sini
 
 // Fetch user details from the database
-$sql = "SELECT * FROM users WHERE id_user = $user_id";
+$sql = "SELECT * FROM users WHERE id_user = $id_user";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
@@ -248,42 +248,59 @@ $paketQuery = $conn->query("SELECT * FROM paket_perjalanan LIMIT 8");
 
         <section class="popular section" id="popular">
             <h2 class="section__title">
-                Recommendation <br>
-                Destination packages
+                Popular <br>
+                Destinations
             </h2>
 
-<div class="container swiper" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="300">
-    <div class="card-wrapper">
-        <ul class="card-list-city swiper-wrapper">
-            <?php
-            $paketQuery = $conn->query("SELECT * FROM paket_perjalanan");
-            if ($paketQuery->num_rows == 0): ?>
-                <p style="padding:1rem">Belum ada paket tersedia.</p>
-            <?php endif; ?>
-            <?php while($paket = $paketQuery->fetch_assoc()): ?>
-                <li class="card-item-city swiper-slide">
-                    <a href="pesan_paket.php?id_paket=<?= $paket['id_paket'] ?>" class="card-link-city">
-                        <?php if ($paket['diskon'] > 0): ?>
-                            <span class="badge-diskon"><?= $paket['diskon'] ?>% OFF</span>
-                        <?php endif; ?>
-                        <img src="<?= htmlspecialchars($paket['gambar']) ?>" alt="<?= htmlspecialchars($paket['nama_paket']) ?>" class="card-image-city">
-                        <h2 class="card-title-city"><?= htmlspecialchars($paket['nama_paket']) ?></h2>
-                        <p class="card-paragraph-city"><?= htmlspecialchars(mb_strimwidth($paket['deskripsi'], 0, 60, '...')) ?></p>
-                        <div class="harga-wrap">
-                            <?php if ($paket['diskon'] > 0): ?>
-                                <span class="harga-asli">Rp <?= number_format($paket['harga_asli'],0,',','.') ?></span>
-                            <?php endif; ?>
-                            <span class="harga-diskon">Rp <?= number_format($paket['harga'],0,',','.') ?></span>
-                        </div>
-                    </a>
-                </li>
-            <?php endwhile; ?>
-        </ul>
-        <div class="swiper-pagination"></div>
-        <div class="swiper-slide-button swiper-button-prev"></div>
-        <div class="swiper-slide-button swiper-button-next"></div>
-    </div>
-</div>
+            <div class="popular__container container grid">
+                <article class="popular__card">
+                    <div class="popular__image">
+                        <img src="assets/kawahputih.jpg" alt="popular image" class="popular__img">
+                        <div class="popular__shadow"></div>
+                    </div>
+                    
+                    <h2 class="popular__tittle">
+                        Kawah Putih
+                    </h2>
+
+                    <div class="popular__location">
+                        <i class="ri-map-pin-line"></i>
+                        <span>Bandung</span>
+                    </div>
+                </article>
+
+                <article class="popular__card">
+                   <a href="kutatourism.php"> <div class="popular__image">
+                        <img  src="assets/pantaiKuta.jpg" alt="popular image" class="popular__img">
+                        <div class="popular__shadow"></div>
+                    </div></a>
+                    
+                    <h2 class="popular__tittle">
+                        Pantai Kuta
+                    </h2>
+
+                    <div class="popular__location">
+                        <i class="ri-map-pin-line"></i>
+                        <span>Bali</span>
+                    </div>
+                </article>
+
+                <article class="popular__card">
+                    <div class="popular__image">
+                        <img src="assets/gunungbromo.jpg" alt="popular image" class="popular__img">
+                        <div class="popular__shadow"></div>
+                    </div>
+                    
+                    <h2 class="popular__tittle">
+                        Mount Bromo
+                    </h2>
+
+                    <div class="popular__location">
+                        <i class="ri-map-pin-line"></i>
+                        <span>Malang</span>
+                    </div>
+                </article>
+            </div>
         </section>
 
         <section class="explore section" id="explore">

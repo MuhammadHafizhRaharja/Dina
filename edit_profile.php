@@ -3,14 +3,14 @@ session_start();
 include 'dinamemberdb.php'; // Database connection
 
 // Check if the user is logged in
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['id_user'])) {
     header("Location: Signin.php"); // Redirect if the user is not logged in
     exit();
 }
 
 // Retrieve user details from the database
-$user_id = $_SESSION['user_id'];
-$sql = "SELECT * FROM users WHERE id_user = $user_id";
+$id_user = $_SESSION['id_user'];
+$sql = "SELECT * FROM users WHERE id_user = $id_user";
 $result = $conn->query($sql);
 $user = $result->fetch_assoc();
 
@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // Update the user profile in the database
-    $sql = "UPDATE users SET username = '$username', fullname = '$fullname', email = '$email', gender = '$gender', foto_profil = '$profile_picture', password = '$password' WHERE id_user = $user_id";
+    $sql = "UPDATE users SET username = '$username', fullname = '$fullname', email = '$email', gender = '$gender', foto_profil = '$profile_picture', password = '$password' WHERE id_user = $id_user";
     
     if ($conn->query($sql) === TRUE) {
         $_SESSION['success_message'] = "Profile updated successfully!";

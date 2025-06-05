@@ -81,17 +81,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 <a href="signup.php" class="form__register">Don't have an account?</a>
 
-                <div class="form__social">
-                    <span class="form__social-text">Or Login with</span>
-                    <a href="#" class="form__social-icon"><i class='bx bxl-facebook'></i></a>
-                    <a href="#" class="form__social-icon"><i class='bx bxl-google'></i></a>
-                    <a href="#" class="form__social-icon"><i class='bx bxl-instagram'></i></a>
-                </div>
-
                 <a href="index.php" class="form__register">Back to home</a>
             </form>
         </div>
-    </div>
+    </div> 
 
     <script src="assets/js/Signin.js"></script>
 

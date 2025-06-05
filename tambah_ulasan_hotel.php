@@ -11,11 +11,11 @@ $id_hotel = $_GET['id_hotel'] ?? 1;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id_user = $_SESSION['id_user'];
-    $id_hotel = $_POST['id_hotel'];
+    $id_hotel = $_POST['id_hotel']; 
     $rating = $_POST['rating'];
     $komentar = $_POST['komentar'];
 
-    $stmt = $conn->prepare("INSERT INTO ulasan_hotel (id_user, id_hotel, komentar, rating) VALUES (?, ?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO ulasan_hotel (id_user, id_hotel, komentar, rating) VALUES (?, ?, ?, ?)"); // <-- perbaiki di sini
     $stmt->bind_param("iisi", $id_user, $id_hotel, $komentar, $rating);
     $stmt->execute();
     $stmt->close();

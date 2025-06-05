@@ -10,14 +10,14 @@ if (!isset($_SESSION['id_user'])) {
 include 'CRUD/reservasi restoran/db.php';
 
 // Misal hotel yang dipilih/ditampilkan adalah hotel_id = 1
-$hotel_id = 2;
+$id_hotel = 2;
 
 $id_user = $_SESSION['id_user'];
-$id_hotel = $_GET['id'] ?? 1;
+$id_hotel = $_GET['id_hotel'] ?? 2;
 
 $username = $_SESSION['username']; // Pastikan username disimpan di session saat login
 
-$stmt = $conn->prepare("SELECT name, image, location FROM hotels WHERE id = ?");
+$stmt = $conn->prepare("SELECT name, image, location FROM hotels WHERE id_hotel = ?");
 $stmt->bind_param("i", $id_hotel);
 $stmt->execute();
 $stmt->bind_result($name, $image, $location);
@@ -25,9 +25,9 @@ $stmt->fetch();
 $stmt->close();
 
 // Ambil room types dari database untuk hotel ini
-$sql = "SELECT type_key, name, price FROM room_types WHERE hotel_id = ?";
+$sql = "SELECT type_key, name, price FROM room_types WHERE id_hotel = ?";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $hotel_id);
+$stmt->bind_param("i", $id_hotel); // <-- perbaiki di sini
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -114,7 +114,7 @@ if ($checkin && $checkout) {
                     </select>
 
                     <!-- Tambahan penting -->
-                    <input type="hidden" name="hotel_id" value="<?= $hotel_id ?>">
+                    <input type="hidden" name="id_hotel" value="<?= $id_hotel ?>">
 
                     <textarea class="form-control mb-3 bg-dark text-white" name="special_request" placeholder="Special Request (optional)" rows="3"></textarea>
 
@@ -136,7 +136,7 @@ if ($checkin && $checkout) {
         SELECT uh.*, u.fullname, u.foto_profil 
         FROM ulasan_hotel uh
         JOIN users u ON uh.id_user = u.id_user
-        WHERE uh.id_hotel = $hotel_id
+        WHERE uh.id_hotel = $id_hotel
         ORDER BY uh.tanggal DESC
         LIMIT 3
     ");
@@ -178,8 +178,8 @@ if ($checkin && $checkout) {
     <?php endwhile; ?>
 </div>
 <div class="actions">
-    <a href="semua_ulasan_hotel.php?id_hotel=<?= $hotel_id ?>" class="btn">See More</a>
-    <a href="tambah_ulasan_hotel.php?id_hotel=<?= $hotel_id ?>" class="btn">Review</a>
+    <a href="semua_ulasan_hotel.php?id_hotel=<?= $id_hotel ?>" class="btn">See More</a>
+    <a href="tambah_ulasan_hotel.php?id_hotel=<?= $id_hotel ?>" class="btn">Review</a>
 </div>
    
 

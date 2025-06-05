@@ -200,9 +200,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="form__social">
                     <a href="signin.php" class="form__register">Already have an account?</a>
                     <span class="form__social-text">Or sign up with</span>
-                    <a href="#" class="form__social-icon"><i class='bx bxl-facebook'></i></a>
-                    <a href="#" class="form__social-icon"><i class='bx bxl-google'></i></a>
-                    <a href="#" class="form__social-icon"><i class='bx bxl-instagram'></i></a>
                 </div>
             </form>
 
