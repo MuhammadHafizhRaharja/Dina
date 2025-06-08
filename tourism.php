@@ -58,6 +58,14 @@ $resTop = $conn->query($sqlTop);
 if ($resTop && $resTop -> num_rows > 0) {
     $topWisata = $resTop->fetch_assoc();
 }
+
+$kota = 'Bali';
+$stmt = $conn->prepare("SELECT * FROM pengalaman_wisata WHERE kota = ? ORDER BY tanggal DESC");
+$stmt->bind_param("s", $kota);
+$stmt->execute();
+$res = $stmt->get_result();
+$pengalaman = $res->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
 ?>
 
 <!--fitur-->
@@ -121,6 +129,39 @@ if ($resTop && $resTop -> num_rows > 0) {
     </div>
 </div>
 
+<!--Detail Pengalaman-->
+<h2 class="title" data-aos="fade-up">Pengalaman Wisata di <span style="color: maroon;"> <?= htmlspecialchars($kota) ?> </span> </h2>
+
+<div class="container" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="300">
+    <div class="card">
+        <ul class="card_list">
+            <?php if (!$pengalaman): ?>
+                <p style="padding:1rem">Belum ada pengalaman di <?= htmlspecialchars($kota) ?>.</p>
+            <?php endif; ?>
+
+            <?php foreach ($pengalaman as $exp): ?>
+                <li class="card_item">
+                    <a href="detail_pengalaman.php?id=<?= $exp['id_pengalaman'] ?>" class="card-link">
+                        <img src="<?= htmlspecialchars($exp['foto']) ?>" alt="Foto Pengalaman" class="card-image" style="height:220px;object-fit:cover;">
+                        <h2 class="card_title"><?= htmlspecialchars($exp['judul']) ?></h2>
+                        <div class="card_rating" style="color:#f39c12;font-size:1.2em;">
+                            <?php for($i=0;$i<$exp['rating'];$i++) echo '<i class="fa fa-star"></i>'; ?>
+                            <?php for($i=$exp['rating'];$i<5;$i++) echo '<i class="fa fa-star-o"></i>'; ?>
+                        </div>
+                        <p class="card_paragraph"><?= htmlspecialchars(substr($exp['cerita'],0,60)) ?>...</p>
+                        <div class="card_user" style="font-size:0.95em;color:#555;">
+                            <i class="fa fa-user"></i> <?= htmlspecialchars($exp['nama_user']) ?>
+                        </div>
+                    </a>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+        <div class="swiper-pagination"></div>
+    </div>
+</div>
+<div class="actions">
+<a href="tambah_pengalaman.php" class="btn">Tambah Pengalaman</a>
+</div>
 <?php
 include 'views/footer5.php';
 ?>
