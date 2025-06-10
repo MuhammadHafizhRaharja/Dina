@@ -54,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   <div class="container">
     <h2>Struk Pembayaran Restoran</h2>
-    <div class="status">Status: LUNAS</div>
+    <div class="status">Pembayaran Berhasil</div>
 
     <p><span class="label">Nama:</span> <?= htmlspecialchars($username) ?></p>
     <p><span class="label">Telepon:</span> <?= htmlspecialchars($telepon) ?></p>

@@ -10,14 +10,14 @@ if (!isset($_SESSION['id_user'])) {
 include 'CRUD/reservasi restoran/db.php';
 
 // Misal hotel yang dipilih/ditampilkan adalah hotel_id = 1
-$id_hotel = 9;
+$hotel_id = 9;
 
 $id_user = $_SESSION['id_user'];
-$id_hotel = $_GET['id_hotel'] ?? 9;
+$id_hotel = $_GET['id'] ?? 9;
 
 $username = $_SESSION['username']; // Pastikan username disimpan di session saat login
 
-$stmt = $conn->prepare("SELECT name, image, location FROM hotels WHERE id_hotel = ?");
+$stmt = $conn->prepare("SELECT name, image, location FROM hotels WHERE id = ?");
 $stmt->bind_param("i", $id_hotel);
 $stmt->execute();
 $stmt->bind_result($name, $image, $location);
@@ -25,9 +25,9 @@ $stmt->fetch();
 $stmt->close();
 
 // Ambil room types dari database untuk hotel ini
-$sql = "SELECT type_key, name, price FROM room_types WHERE id_hotel = ?";
+$sql = "SELECT type_key, name, price FROM room_types WHERE hotel_id = ?";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $id_hotel); // <-- perbaiki di sini
+$stmt->bind_param("i", $hotel_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -114,7 +114,7 @@ if ($checkin && $checkout) {
                     </select>
 
                     <!-- Tambahan penting -->
-                    <input type="hidden" name="id_hotel" value="<?= $id_hotel ?>">
+                    <input type="hidden" name="hotel_id" value="<?= $hotel_id ?>">
 
                     <textarea class="form-control mb-3 bg-dark text-white" name="special_request" placeholder="Special Request (optional)" rows="3"></textarea>
 
