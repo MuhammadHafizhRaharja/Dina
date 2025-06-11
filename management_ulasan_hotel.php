@@ -69,8 +69,10 @@ $ulasan = $conn->query("
                     <textarea name="komentar" required></textarea>
                     <button type="submit" name="create_comment" class="btn">Kirim Balasan</button>
                 </form>
+                <br>
                 <a href="?hapus=<?= $row['id_ulasan'] ?>" onclick="return confirm('Yakin ingin menghapus ulasan ini?')" class="btn">Hapus</a>
             </div>
+            
             <div class="review-replies">
                 <?php
                 $balasan = $conn->query("SELECT bh.*, u.fullname FROM balasan_ulasan_hotel bh

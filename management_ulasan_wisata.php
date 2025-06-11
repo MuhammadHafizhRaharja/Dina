@@ -76,8 +76,10 @@ $ulasan = $conn->query("
                     <textarea name="komentar" required></textarea>
                     <button type="submit" name="create_comment" class="btn">Kirim Balasan</button>
                 </form>
+                <br>
                 <a href="?hapus=<?= $row['id_ulasan'] ?>" onclick="return confirm('Yakin ingin menghapus ulasan ini?')" class="btn">Hapus</a>
             </div>
+
             <!-- Tampilkan balasan -->
             <div class="review-replies">
                 <?php
