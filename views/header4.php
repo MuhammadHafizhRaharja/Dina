@@ -112,16 +112,6 @@ $paketQuery = $conn->query("SELECT * FROM paket_perjalanan LIMIT 8");
                     </ul>
                     <hr />
 
-                    <ul>
-                        <li>
-                            <i class="material-icons-outlined">analytics</i>
-                            Top Place To Go analytics
-                        </li>
-                        <li>
-                            <i class="material-icons-outlined">mail</i>
-                            Inbox
-                        </li>
-                    </ul>
                     <hr/>
                     <ul>
                         <a href="Index.php">
