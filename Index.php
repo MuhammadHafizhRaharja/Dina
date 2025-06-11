@@ -42,7 +42,7 @@ session_start();
                         <a href="#explore" class="nav__link">Explore</a>
                     </li>
 
-                    <li class="nav__item nav__item--desktop">
+                    <li class="nav_item nav_item--desktop">
                         <div class="navbar-profile">
                           <img
                             src="assets/User_Icon.png"
@@ -93,7 +93,7 @@ session_start();
                     </ul>
             
                     <ul>
-                        <a href="Index.php">
+                        <a href="signin.php">
                       <li class="all-account">
                         <i class="material-icons-outlined">logout</i>
                         Log in
@@ -115,7 +115,7 @@ session_start();
 
     <main class="main">
         <section class="home section" id="home">
-            <video src="assets/Cliplandingpage.mp4" muted autoplay loop class="home__bg"></video>
+            <img src="assets/sindoro.jpg" alt="foto sindoro" class="home__bg">
             <div class="home__shadow"></div>
             
             <div class="home__container container grid">
