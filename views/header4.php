@@ -105,10 +105,6 @@ $paketQuery = $conn->query("SELECT * FROM paket_perjalanan LIMIT 8");
                             <?php endif; ?>
                         </li>
 
-                        <li>
-                            <i class="material-icons-outlined">settings</i>
-                            Settings
-                        </li>
                     </ul>
                     <hr />
 
