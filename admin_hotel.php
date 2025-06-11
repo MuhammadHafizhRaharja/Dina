@@ -9,9 +9,9 @@ if ($_SESSION['role'] !== 'admin') {
 }
 
 // Ambil semua data reservasi hotel
-$sql = "SELECT id, name, email, phone, hotel_id, checkin, checkout, room_type, special_request, nights, total_price
+$sql = "SELECT id_hotel, name, email, phone, hotel_id, checkin, checkout, room_type, special_request, nights, total_price
         FROM hotel_reservations
-        ORDER BY id DESC";
+        ORDER BY id_hotel DESC";
 $result = $conn->query($sql);
 ?>
 
@@ -50,7 +50,7 @@ $result = $conn->query($sql);
                 <tbody>
                     <?php while ($row = $result->fetch_assoc()): ?>
                         <tr>
-                            <td><?= $row['id']; ?></td>
+                            <td><?= $row['id_hotel']; ?></td>
                             <td><?= htmlspecialchars($row['name']); ?></td>
                             <td><?= htmlspecialchars($row['email']); ?></td>
                             <td><?= htmlspecialchars($row['phone']); ?></td>
@@ -62,8 +62,8 @@ $result = $conn->query($sql);
                             <td><?= $row['nights']; ?></td>
                             <td>Rp<?= number_format($row['total_price'], 0, ',', '.'); ?></td>
                             <td>
-                                <a href="edit_hotel_reservation.php?id=<?= $row['id']; ?>" class="btn btn-warning">Edit</a>
-                                <a href="delete_hotel_reservation.php?id=<?= $row['id']; ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this reservation?')">Delete</a>
+                                <a href="edit_hotel_reservation.php?id=<?= $row['id_hotel']; ?>" class="btn btn-warning">Edit</a>
+                                <a href="delete_hotel_reservation.php?id=<?= $row['id_hotel']; ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this reservation?')">Delete</a>
                             </td>
                         </tr>
                     <?php endwhile; ?>

@@ -13,11 +13,11 @@ include 'CRUD/reservasi restoran/db.php';
 $hotel_id = 9;
 
 $id_user = $_SESSION['id_user'];
-$id_hotel = $_GET['id'] ?? 9;
+$id_hotel = $_GET['id_hotel'] ?? 9;
 
 $username = $_SESSION['username']; // Pastikan username disimpan di session saat login
 
-$stmt = $conn->prepare("SELECT name, image, location FROM hotels WHERE id = ?");
+$stmt = $conn->prepare("SELECT name, image, location FROM hotels WHERE id_hotel = ?");
 $stmt->bind_param("i", $id_hotel);
 $stmt->execute();
 $stmt->bind_result($name, $image, $location);
