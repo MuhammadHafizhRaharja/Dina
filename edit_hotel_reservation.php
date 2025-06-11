@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nights          = $_POST['nights'];
     $total_price     = $_POST['total_price'];
 
-    $stmt = $conn->prepare("UPDATE hotel_reservations SET name=?, email=?, phone=?, hotel_id=?, checkin=?, checkout=?, room_type=?, special_request=?, nights=?, total_price=? WHERE id=?");
+    $stmt = $conn->prepare("UPDATE hotel_reservations SET name=?, email=?, phone=?, hotel_id=?, checkin=?, checkout=?, room_type=?, special_request=?, nights=?, total_price=? WHERE id_hotel=?");
     $stmt->bind_param("ssssssssiii", $name, $email, $phone, $hotel_id, $checkin, $checkout, $room_type, $special_request, $nights, $total_price, $id);
 
     if ($stmt->execute()) {
