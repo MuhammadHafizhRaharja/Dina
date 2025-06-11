@@ -1,4 +1,3 @@
-<!-- update_reservation.php -->
 <?php
 include 'db.php';
 

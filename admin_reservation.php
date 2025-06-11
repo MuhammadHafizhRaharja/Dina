@@ -1,19 +1,10 @@
 <?php
-// filepath: c:\xampp\htdocs\dina1\Dina\admin_reservation.php
 session_start();
 include 'db.php';
 
-// (Jika perlu, tambahkan pengecekan admin di sini)
-// if ($_SESSION['role'] !== 'admin') {
-//     header("Location: ../Signin.php");
-//     exit();
-// }
-
-// Fetch all reservations from the database
 $query = "SELECT * FROM reservasi ORDER BY tanggal DESC";
 $result = $conn->query($query);
 
-// Handle form submission to create a reservation
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create'])) {
     $nama = $_POST['nama'];
     $telepon = $_POST['telepon'];
@@ -34,7 +25,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create'])) {
     $stmt->close();
 }
 
-// Handle delete reservation
 if (isset($_POST['delete_reservation'])) {
     $reservation_id = $_POST['reservation_id'];
 
