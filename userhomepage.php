@@ -106,22 +106,7 @@ $paketQuery = $conn->query("SELECT * FROM paket_perjalanan LIMIT 8");
                             <?php endif; ?>
                         </li>
 
-                        <li>
-                            <i class="material-icons-outlined">settings</i>
-                            Settings
-                        </li>
-                    </ul>
-                    <hr />
-
-                    <ul>
-                        <li>
-                            <i class="material-icons-outlined">analytics</i>
-                            Top Place To Go analytics
-                        </li>
-                        <li>
-                            <i class="material-icons-outlined">mail</i>
-                            Inbox
-                        </li>
+                
                     </ul>
                     <hr/>
                     <ul>
@@ -147,7 +132,7 @@ $paketQuery = $conn->query("SELECT * FROM paket_perjalanan LIMIT 8");
 
     <main class="main">
         <section class="home section" id="home">
-            <video src="assets/Cliplandingpage.mp4" muted autoplay loop class="home__bg"></video>
+        <img src="assets/sindoro.jpg" alt="foto sindoro" class="home__bg">
             <div class="home__shadow"></div>
 
             <div class="home__container container grid">

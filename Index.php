@@ -65,34 +65,6 @@ session_start();
                     <hr />
             
                     <ul>
-                      <li>
-                        <i class="material-icons-outlined">analytics</i>
-                        Top Place To Go analytics
-                      </li>
-                      <li>
-                        <i class="material-icons-outlined">mail</i>
-                        Inbox
-                      </li>
-                    </ul>
-                    <hr />
-            
-                    <ul>
-                      <span style="color: white; font-size: 1.1rem">Account</span>
-                      <li
-                        style="
-                          margin-top: 10px;
-                          margin-bottom: 10px;
-                          background-color: #31363f;
-                        ">
-                        
-                        <div class="accounts">
-                          <span style="color: white">Sign In</span>
-                          <span>Pls sign in to continue</span>
-                        </div>
-                      </li>
-                    </ul>
-            
-                    <ul>
                         <a href="signin.php">
                       <li class="all-account">
                         <i class="material-icons-outlined">logout</i>
