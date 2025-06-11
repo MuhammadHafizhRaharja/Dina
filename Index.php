@@ -111,7 +111,7 @@ session_start();
 
                 <div class="home__cards grid">
                         <article class="home__card">
-                        <a href="slider.php">
+                        <a href="signin.php">
                             <img src="assets/bali.jpg" alt="home image" class="home__card-img">
                             <h3 class="home__card-title">Bali</h3>
                             <div class="home__card-shadow"></div>
@@ -119,21 +119,27 @@ session_start();
                         </article>
                     
                     <article class="home__card">
+                        <a href="signin.php">
                         <img src="assets/bandung.png" alt="home image" class="home__card-img">
                         <h3 class="home__card-title">Bandung</h3>
                         <div class="home__card-shadow"></div>
+                        </a>
                     </article>
                     
                     <article class="home__card">
+                    <a href="signin.php">
                         <img src="assets/papua.jpg" alt="home image" class="home__card-img">
                         <h3 class="home__card-title">Papua</h3>
                         <div class="home__card-shadow"></div>
+                        </a>
                     </article>
 
                     <article class="home__card">
+                        <a href="signin.php">
                         <img src="assets/jakarta.jpg" alt="home image" class="home__card-img">
                         <h3 class="home__card-title">Jakarta</h3>
                         <div class="home__card-shadow"></div>
+                        </a>
                     </article>
                 </div>
             </div>
@@ -187,7 +193,7 @@ session_start();
                 </article>
 
                 <article class="popular__card">
-                   <a href="kutatourism.php"> <div class="popular__image">
+                   <a href="signin.php"> <div class="popular__image">
                         <img  src="assets/pantaiKuta.jpg" alt="popular image" class="popular__img">
                         <div class="popular__shadow"></div>
                     </div></a>
