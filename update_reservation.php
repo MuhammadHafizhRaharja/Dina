@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $jam = $_POST['jam'];
     $pesan = $_POST['pesan'];
 
-    $stmt = $conn->prepare("UPDATE reservasi SET nama=?, telepon=?, jumlah_orang=?, tanggal=?, id_meja=?, jam=?, pesan=? WHERE id_reservasi=?");
+    $stmt = $conn->prepare("UPDATE reservasi SET username=?, telepon=?, jumlah_orang=?, tanggal=?, id_meja=?, jam=?, pesan=? WHERE id_reservasi=?");
     $stmt->bind_param("ssissssi", $nama, $telepon, $jumlah_orang, $tanggal, $id_meja, $jam, $pesan, $id_reservasi);
 
     if ($stmt->execute()) {
@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <?php if (isset($error)) echo "<p style='color:red;'>$error</p>"; ?>
         <form method="POST">
             <label>Nama Pemesan:</label>
-            <input type="text" name="nama" value="<?= htmlspecialchars($reservasi['nama']) ?>" required>
+            <input type="text" name="nama" value="<?= htmlspecialchars($reservasi['username']) ?>" required>
             <label>Nomor Telepon:</label>
             <input type="text" name="telepon" value="<?= htmlspecialchars($reservasi['telepon']) ?>" required>
             <label>Jumlah Orang:</label>

@@ -6,7 +6,7 @@ $query = "SELECT * FROM reservasi ORDER BY tanggal DESC";
 $result = $conn->query($query);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create'])) {
-    $nama = $_POST['nama'];
+    $nama = $_POST['username'];
     $telepon = $_POST['telepon'];
     $jumlah_orang = $_POST['jumlah_orang'];
     $tanggal = $_POST['tanggal'];
@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create'])) {
     $jam = $_POST['jam'];
     $pesan = $_POST['pesan'];
 
-    $stmt = $conn->prepare("INSERT INTO reservasi (nama, telepon, jumlah_orang, tanggal, id_meja, jam, pesan, total_biaya) VALUES (?, ?, ?, ?, ?, ?, ?, 0)");
+    $stmt = $conn->prepare("INSERT INTO reservasi (username, telepon, jumlah_orang, tanggal, id_meja, jam, pesan, total_biaya) VALUES (?, ?, ?, ?, ?, ?, ?, 0)");
     $stmt->bind_param("ssissss", $nama, $telepon, $jumlah_orang, $tanggal, $id_meja, $jam, $pesan);
 
     if ($stmt->execute()) {
@@ -87,7 +87,7 @@ $conn->close();
                         <tr>
                             <td><?= $row['id_reservasi'] ?></td>
                             <td><?= $row['id_restaurants'] ?></td>
-                            <td><?= htmlspecialchars($row['nama']) ?></td>
+                            <td><?= htmlspecialchars($row['username']) ?></td>
                             <td><?= htmlspecialchars($row['telepon']) ?></td>
                             <td><?= $row['jumlah_orang'] ?></td>
                             <td><?= $row['tanggal'] ?></td>

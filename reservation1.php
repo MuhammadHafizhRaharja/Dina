@@ -24,7 +24,7 @@ $stmt->bind_result($name, $image, $location);
 $stmt->fetch();
 $stmt->close();
 
-// Ambil room types dari database untuk hotel ini
+// Ambil room types dari database
 $sql = "SELECT type_key, name, price FROM room_types WHERE hotel_id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $hotel_id);
@@ -32,6 +32,7 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 $roomTypes = [];
+
 while ($row = $result->fetch_assoc()) {
     $roomTypes[$row['type_key']] = [
         'name' => $row['name'],
