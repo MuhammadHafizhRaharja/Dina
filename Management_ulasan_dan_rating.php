@@ -75,7 +75,7 @@ $ulasan = $conn->query("
                 <div class="date"><?= date('d M Y', strtotime($row['tanggal'])) ?></div>
             </div>
             <div class="review-actions">
-                <!-- Form untuk membuat comment balasan -->
+
                 <form action="Management_ulasan_dan_rating.php" method="POST" class="comment-form">
                     <input type="hidden" name="id_ulasan" value="<?= $row['id_ulasan'] ?>">
                     <label for="komentar">Balas Ulasan:</label>
@@ -83,12 +83,10 @@ $ulasan = $conn->query("
                     <br>
                     <button type="submit" name="create_comment" class="btn">Kirim Balasan</button>
                 </form>
-
-                <!-- Link untuk menghapus ulasan -->
+                <br>
                 <a href="?hapus=<?= $row['id_ulasan'] ?>" onclick="return confirm('Yakin ingin menghapus ulasan ini?')" class="btn">Hapus</a>
             </div>
 
-            <!-- Menampilkan Balasan terhadap Ulasan -->
             <div class="review-replies">
                 <?php
                 $balasan = $conn->query("SELECT * FROM balasan_ulasan bu
