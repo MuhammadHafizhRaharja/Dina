@@ -17,7 +17,7 @@ if (!isset($_GET['id'])) {
 $id = intval($_GET['id']);
 
 // Ambil data reservasi hotel
-$stmt = $conn->prepare("SELECT * FROM hotel_reservations WHERE id = ?");
+$stmt = $conn->prepare("SELECT * FROM hotel_reservations WHERE id_hotel = ?");
 $stmt->bind_param("i", $id);
 $stmt->execute();
 $result = $stmt->get_result();
