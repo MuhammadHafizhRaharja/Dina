@@ -28,8 +28,6 @@ if ($result->num_rows > 0) {
     exit();
 }
 
-// Ambil 8 paket perjalanan dari database
-$paketQuery = $conn->query("SELECT * FROM paket_perjalanan LIMIT 8");
 ?>
 
 <!DOCTYPE html>
