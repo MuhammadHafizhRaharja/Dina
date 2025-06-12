@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 session_start();
 include 'dinamemberdb.php'; // Database connection
 
@@ -17,7 +19,14 @@ if (isset($_GET['delete_user'])) {
     // Sanitize the input
     $id_user = intval($_GET['delete_user']); // Ensure it's a number
 
-    // Delete user using a prepared statement to avoid SQL injection
+    // Hapus dulu data ulasan_hotel yang terkait user ini
+    $sql_delete_ulasan = "DELETE FROM ulasan_hotel WHERE id_user = ?";
+    $stmt_ulasan = $conn->prepare($sql_delete_ulasan);
+    $stmt_ulasan->bind_param("i", $id_user);
+    $stmt_ulasan->execute();
+    $stmt_ulasan->close();
+
+    // Baru hapus user
     $sql = "DELETE FROM users WHERE id_user = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id_user); // "i" for integer parameter

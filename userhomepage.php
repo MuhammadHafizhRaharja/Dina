@@ -28,9 +28,6 @@ if ($result->num_rows > 0) {
     echo "User not found!";
     exit();
 }
-
-// Ambil 8 paket perjalanan dari database
-$paketQuery = $conn->query("SELECT * FROM paket_perjalanan LIMIT 8");
 ?>
 
 <!DOCTYPE html>
