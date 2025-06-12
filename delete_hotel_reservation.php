@@ -13,7 +13,7 @@ if ($_SESSION['role'] !== 'admin') {
 // Proses hapus jika ada parameter id
 if (isset($_GET['id'])) {
     $id = intval($_GET['id']);
-    $sql = "DELETE FROM hotel_reservations WHERE id = $id";
+    $sql = "DELETE FROM hotel_reservations WHERE id_hotel = $id";
     if ($conn->query($sql) === TRUE) {
         $_SESSION['success_message'] = "Reservation deleted successfully.";
     } else {
